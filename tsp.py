@@ -1,6 +1,7 @@
 import csv
 from bruteForce import *
 from nearestNeighbor import *
+from farthestInsertion import *
 
 def main():
   print("""
@@ -19,6 +20,7 @@ Enter a CSV file ["example.csv"]:
   print("""
 1: Brute Force
 2: Nearest Neighbor
+3: Farthest Insertion
 
 
 Enter an algorithm by its number:
@@ -30,7 +32,7 @@ Enter an algorithm by its number:
   print("\n")
   print("---------------------------------------------------------------------------------------------\n\n")
 
-  if algo == "1" or algo == "2":
+  if algo == "1" or algo == "2" or algo == "3":
     with open(file) as infile:
       csv_reader = csv.reader(infile, delimiter=',')
       for row in infile:
@@ -43,6 +45,8 @@ Enter an algorithm by its number:
       bruteForce(coordPairs, cityNames)
     elif algo == "2":
       nearestNeighbor(coordPairs, cityNames)
+    elif algo == "3":
+      farthestInsertion(coordPairs, cityNames)
   else:
     print("Enter an algorithm number given by the list above")
 if __name__ == "__main__":
