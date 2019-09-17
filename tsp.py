@@ -2,10 +2,19 @@ import csv
 from bruteForce import *
 from nearestNeighbor import *
 from farthestInsertion import *
-
-coordPairs = []
+from tkinter import *
 
 def main():
+  root = Tk()
+  canvas_height = 800
+  canvas_width = 1200
+  root.title("Euclidean TSP Solver")
+  w = Canvas(root, width = canvas_width, height = canvas_height)
+  w.pack(expand = YES, fill=BOTH)
+  message = Label(root, text = "Example text")
+  message.pack(side=BOTTOM)
+
+
   print("""
 EUCLIDEAN TSP SOLVER:
 
@@ -29,6 +38,7 @@ Enter an algorithm by its number:
 """)
   algo = input()
   cityNames = []
+  coordPairs = []
 
   print("\n")
   print("---------------------------------------------------------------------------------------------\n\n")
@@ -41,6 +51,9 @@ Enter an algorithm by its number:
         rowArray = row.split(",")
         coordPairs.append([int(rowArray[1]), int(rowArray[2])])
         cityNames.append(rowArray[0])
+      for pair in coordPairs:
+        w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
+
       print("---------------------------------------------------------------------------------------------\n\n")
     if algo == "1":
       bruteForce(coordPairs, cityNames)
@@ -50,6 +63,15 @@ Enter an algorithm by its number:
       farthestInsertion(coordPairs, cityNames)
   else:
     print("Enter an algorithm number given by the list above")
+
+
+  root.mainloop()
+  
 if __name__ == "__main__":
   main()
   print("---------------------------------------------------------------------------------------------\n\n")
+
+
+# GUI References:
+# https://stackoverflow.com/questions/39888580/how-can-i-draw-a-point-with-canvas-in-tkinter
+# https://tkdocs.com/tutorial/canvas.html#creating
