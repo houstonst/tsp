@@ -3,6 +3,8 @@ from bruteForce import *
 from nearestNeighbor import *
 from farthestInsertion import *
 
+coordPairs = []
+
 def main():
   print("""
 EUCLIDEAN TSP SOLVER:
@@ -26,7 +28,6 @@ Enter a CSV file ["example.csv"]:
 Enter an algorithm by its number:
 """)
   algo = input()
-  coordPairs = []
   cityNames = []
 
   print("\n")
