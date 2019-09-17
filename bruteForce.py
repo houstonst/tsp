@@ -37,3 +37,5 @@ def bruteForce(graph, nameArray): #return the optimal hamiltonian cycle of a com
   line1 = "\n\nThe optimal path in this {}-city instance using Brute Force is: \n{}\n\n".format(graphSize, pathString)
   line2 = "This path costs {} units, and required {} iterations in {} seconds \n(running in (n - 1)! = n! time, where n is the number of cities)\n\n".format(cost, iterations, endTime)
   print(line1 + line2)
+
+  return path

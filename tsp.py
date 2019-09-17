@@ -19,16 +19,28 @@ def main():
 EUCLIDEAN TSP SOLVER:
 
 Author: Matt Houston
-Last Edited: 29 AUGUST 2019
+Last Edited: 16 SEPTEMBER 2019
 Filename: tsp.py
 Input: CSV file, formatted in: City Name, Longitude, Latitude
-Output: Optimal hamiltonian cycle and cost
+Output: A hamiltonian cycle and complexity data
 
 Enter a CSV file ["example.csv"]: 
 """)
   file = input()
+  cityNames = []
+  coords = []
   print("---------------------------------------------------------------------------------------------\n\n")
-  print("""
+  with open(file) as infile:
+    csv_reader = csv.reader(infile, delimiter=',')
+    for row in infile:
+      print(row)
+      rowArray = row.split(",")
+      coords.append([int(rowArray[1]), int(rowArray[2])])
+      cityNames.append(rowArray[0])
+    for pair in coords:
+      w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
+    print("---------------------------------------------------------------------------------------------\n\n")
+    print("""
 1: Brute Force
 2: Nearest Neighbor
 3: Farthest Insertion
@@ -36,34 +48,38 @@ Enter a CSV file ["example.csv"]:
 
 Enter an algorithm by its number:
 """)
-  algo = input()
-  cityNames = []
-  coordPairs = []
+    algo = input()
 
-  print("\n")
-  print("---------------------------------------------------------------------------------------------\n\n")
+    print("\n")
+    print("---------------------------------------------------------------------------------------------\n\n")
 
-  if algo == "1" or algo == "2" or algo == "3":
-    with open(file) as infile:
-      csv_reader = csv.reader(infile, delimiter=',')
-      for row in infile:
-        print(row)
-        rowArray = row.split(",")
-        coordPairs.append([int(rowArray[1]), int(rowArray[2])])
-        cityNames.append(rowArray[0])
-      for pair in coordPairs:
-        w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
-
-      print("---------------------------------------------------------------------------------------------\n\n")
-    if algo == "1":
-      bruteForce(coordPairs, cityNames)
-    elif algo == "2":
-      nearestNeighbor(coordPairs, cityNames)
-    elif algo == "3":
-      farthestInsertion(coordPairs, cityNames)
-  else:
-    print("Enter an algorithm number given by the list above")
-
+    if algo == "1" or algo == "2" or algo == "3":
+      if algo == "1":
+        path = bruteForce(coords, cityNames) # path is the same as the path variable in the algorithm's file
+        last = coords[path[len(path)-1]] # the last node touched in the path
+        for i in range(len(path)-1):
+          node = path[i]
+          nxt = path[i+1]
+          w.create_line(coords[node][0], coords[node][1], coords[nxt][0], coords[nxt][1])
+        w.create_line(coords[path[0]][0], coords[path[0]][1], last[0], last[1]) # routes back to the beginning of the path
+      elif algo == "2":
+        path = nearestNeighbor(coords, cityNames) # path is the same as the path variable in the algorithm's file
+        last = coords[path[len(path)-1]] # the last node touched in the path
+        for i in range(len(path)-1):
+          node = path[i]
+          nxt = path[i+1]
+          w.create_line(coords[node][0], coords[node][1], coords[nxt][0], coords[nxt][1])
+        w.create_line(coords[path[0]][0], coords[path[0]][1], last[0], last[1]) # routes back to the beginning of the path
+      elif algo == "3":
+        path = farthestInsertion(coords, cityNames) # path is the same as the path variable in the algorithm's file
+        last = coords[path[len(path)-1]] # the last node touched in the path
+        for i in range(len(path)-1):
+          node = path[i]
+          nxt = path[i+1]
+          w.create_line(coords[node][0], coords[node][1], coords[nxt][0], coords[nxt][1])
+        w.create_line(coords[path[0]][0], coords[path[0]][1], last[0], last[1]) # routes back to the beginning of the path
+    else:
+      print("Enter an algorithm number given by the list above")
 
   root.mainloop()
   

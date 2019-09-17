@@ -81,3 +81,5 @@ def farthestInsertion(graph, nameArray):
   line1 = "\n\nThe optimal path in this {}-city instance using Farthest Insertion is: \n{}\n\n".format(graphSize, pathString)
   line2 = "This path costs {} units, and required {} iterations in {} seconds \n(running in ????????? time, where n is the number of cities)\n\n".format(adjCost, iterations, endTime)
   print(line1 + line2)
+
+  return path
