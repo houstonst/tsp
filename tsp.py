@@ -5,14 +5,14 @@ from farthestInsertion import *
 from tkinter import *
 
 def main():
-  root = Tk()
-  canvas_height = 800
-  canvas_width = 1200
-  root.title("Euclidean TSP Solver")
-  w = Canvas(root, width = canvas_width, height = canvas_height)
-  w.pack(expand = YES, fill=BOTH)
-  message = Label(root, text = "Example text")
-  message.pack(side=BOTTOM)
+  # root = Tk()
+  # canvas_height = 800
+  # canvas_width = 1200
+  # root.title("Euclidean TSP Solver")
+  # w = Canvas(root, width = canvas_width, height = canvas_height)
+  # w.pack(expand = YES, fill=BOTH)
+  # message = Label(root, text = "Example text")
+  # message.pack(side=BOTTOM)
 
 
   print("""
@@ -37,8 +37,8 @@ Enter a CSV file ["example.csv"]:
       rowArray = row.split(",")
       coords.append([int(rowArray[1]), int(rowArray[2])])
       cityNames.append(rowArray[0])
-    for pair in coords:
-      w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
+    # for pair in coords:
+    #   w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
     print("---------------------------------------------------------------------------------------------\n\n")
     print("""
 1: Brute Force
@@ -63,13 +63,13 @@ Enter an algorithm by its number:
           w.create_line(coords[node][0], coords[node][1], coords[nxt][0], coords[nxt][1])
         w.create_line(coords[path[0]][0], coords[path[0]][1], last[0], last[1]) # routes back to the beginning of the path
       elif algo == "2":
-        path = nearestNeighbor(coords, cityNames) # path is the same as the path variable in the algorithm's file
-        last = coords[path[len(path)-1]] # the last node touched in the path
-        for i in range(len(path)-1):
-          node = path[i]
-          nxt = path[i+1]
-          w.create_line(coords[node][0], coords[node][1], coords[nxt][0], coords[nxt][1])
-        w.create_line(coords[path[0]][0], coords[path[0]][1], last[0], last[1]) # routes back to the beginning of the path
+        nearestNeighbor(coords, cityNames) # path is the same as the path variable in the algorithm's file
+        # last = coords[path[len(path)-1]] # the last node touched in the path
+        # for i in range(len(path)-1):
+        #   node = path[i]
+        #   nxt = path[i+1]
+        #   w.create_line(coords[node][0], coords[node][1], coords[nxt][0], coords[nxt][1])
+        # w.create_line(coords[path[0]][0], coords[path[0]][1], last[0], last[1]) # routes back to the beginning of the path
       elif algo == "3":
         path = farthestInsertion(coords, cityNames) # path is the same as the path variable in the algorithm's file
         last = coords[path[len(path)-1]] # the last node touched in the path
@@ -81,7 +81,7 @@ Enter an algorithm by its number:
     else:
       print("Enter an algorithm number given by the list above")
 
-  root.mainloop()
+  #root.mainloop()
   
 if __name__ == "__main__":
   main()
