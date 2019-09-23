@@ -5,15 +5,16 @@ from tsp import *
 
 def step(graph, path, cost, iterations, i, wndw):
   wg = weightedGraph(graph)
-
   min = 999999.9
   next = 0
+
   for node in range(1, len(graph)):
     iterations += 1
     prev = path[0]
     if path.count(node) == 0 and wg[prev][node] < min:
       next = node
       min = wg[prev][node]
+
   cost += min
   wndw.create_line(graph[next][0], graph[next][1], graph[path[0]][0], graph[path[0]][1])
   path = operator.iadd([next], path)
@@ -41,23 +42,26 @@ def nearestNeighbor(graph, nameArray):
   i = 1
 
   def stepper():
-    print("here")
-    nonlocal i, path, cost, iterations
-    print(i)
-    path, cost, iterations = step(graph, path, cost, iterations, i, w)
-    i += 1
+    nonlocal i, path, cost, iterations, graph
+    if i <= len(graph):
+      path, cost, iterations = step(graph, path, cost, iterations, i, w)
+      i += 1
 
+  # TKINTER #
   stepButton = Button(root, text = "Step", command = stepper)
   stepButton.pack(side = BOTTOM)
-  
+  # TKINTER #
+
   pathString = ""
   pathString += nameArray[path[len(path)-1]] + " -> "
   adjCost = cost + wg[path[0]][0]
   endTime = time.time() - startTime
+
   for i in range(0, len(path)-1):
     pathString += nameArray[path[i]] + " -> "
   pathString += nameArray[path[len(path)-1]]
   graphSize = len(graph)
+  
   line1 = "\n\nThe optimal path in this {}-city instance using Nearest Neighbor is: \n{}\n\n".format(graphSize, pathString)
   line2 = "This path costs {} units, and required {} iterations in {} seconds \n(running in (n - 1)^2 = n^2 time, where n is the number of cities)\n\n".format(adjCost, iterations, endTime)
   print(line1 + line2)
