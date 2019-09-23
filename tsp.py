@@ -6,14 +6,13 @@ from tkinter import *
 
 def main():
   # root = Tk()
-  # canvas_height = 800
+  # canvas_height = 700
   # canvas_width = 1200
   # root.title("Euclidean TSP Solver")
   # w = Canvas(root, width = canvas_width, height = canvas_height)
   # w.pack(expand = YES, fill=BOTH)
   # message = Label(root, text = "Example text")
   # message.pack(side=BOTTOM)
-
 
   print("""
 EUCLIDEAN TSP SOLVER:
