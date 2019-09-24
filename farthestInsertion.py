@@ -138,7 +138,10 @@ def farthestInsertion(graph, nameArray):
   message = Label(root, text = "Farthest Insertion")
   message.pack(side=TOP)
   for pair in graph:
+    index = graph.index(pair)
+    name = nameArray[index]
     w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
+    w.create_text(pair[0] + 3, pair[1] - 12, fill = "black", font = "Times 9 bold", text = name)
   # TKINTER #
 
   startTime = time.time()
