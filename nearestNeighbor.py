@@ -31,7 +31,10 @@ def nearestNeighbor(graph, nameArray):
   message = Label(root, text = "Nearest Neighbor")
   message.pack(side=TOP)
   for pair in graph:
-    w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
+    index = graph.index(pair)
+    name = nameArray[index]
+    w.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
+    w.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
   # TKINTER #
 
   startTime = time.time()

@@ -132,13 +132,11 @@ def farthestInsertion(graph, nameArray):
   root.title("Euclidean TSP Solver")
   w = Canvas(root, width = canvas_width, height = canvas_height)
   w.pack(expand = YES, fill=BOTH)
-  message = Label(root, text = "Farthest Insertion")
-  message.pack(side=TOP)
   for pair in graph:
     index = graph.index(pair)
     name = nameArray[index]
-    w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
-    w.create_text(pair[0] + 3, pair[1] - 12, fill = "black", font = "Times 9 bold", text = name)
+    w.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
+    w.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
   # TKINTER #
 
   startTime = time.time()
