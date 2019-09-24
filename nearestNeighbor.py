@@ -26,6 +26,7 @@ def nearestNeighbor(graph, nameArray):
   canvas_height = 800
   canvas_width = 1200
   root.title("Euclidean TSP Solver")
+  root.iconbitmap('favicon.ico')
   w = Canvas(root, width = canvas_width, height = canvas_height)
   w.pack(expand = YES, fill=BOTH)
   for pair in graph:
