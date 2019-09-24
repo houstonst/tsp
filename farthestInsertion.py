@@ -47,24 +47,30 @@ def step(graph, path, cost, itr, wndw):
     
     #see which edge can be broken and connected to this farthest node in the cheapest manner
     edgeList = []
-    for r in range(len(wg)//2):
+    print(path)
+    for r in range(len(wg)):
       for c in range(len(wg)):
-        if r in path and c in path and r != c: #consider edges that exist in the subtour and are not self-directed
-          if abs(path.index(r) - path.index(c)) == 1:
+        if r in path and c in path and r != c: #consider edges that exist in the subtour and are not self-directed. FAILING TO CONSIDER ALL OPTIONS
+          if abs(path.index(r) - path.index(c)) == 1: #this is the error. Does not consider nodes seen later in the path
             edgeList.append((wg[r][c], r, c)) #create a list of edges and the incident nodes that exist in the subtour
+          elif path[len(path)-1] == r and path[len(path)-2] == c:
+            edgeList.append((wg[r][c], r, c))
     minDamage = 999999
     deletedEdge = (-1, -1)
     addedEdge1 = -1
     addedEdge2 = -1
-    for edge in edgeList:
+    #print(wg)
+    for edge in edgeList: #does not seem to correctly assess damages
       pEdge1 = wg[nextNode][edge[1]]
       pEdge2 = wg[nextNode][edge[2]]
       damage = cost - edge[0] + pEdge1 + pEdge2 #calculates the cost that would result from insertion
+      print("Removing the edge {} and adding edges {} and {} increases the cost by {}".format((edge[1], edge[2]), (nextNode, edge[1]), (nextNode, edge[2]), damage))
       if damage < minDamage:
         minDamage = damage
         deletedEdge = (edge[1], edge[2]) #edge in the node-pair form
         addedEdge1 = (nextNode, edge[1])
         addedEdge2 = (nextNode, edge[2])
+    print("Chose to remove {} and add {} and {}".format(deletedEdge, addedEdge1, addedEdge2))
 
 
     #remove and add the appropriate edges to include the new node. Adjust path and cost.
@@ -72,7 +78,7 @@ def step(graph, path, cost, itr, wndw):
     leftMarker = path.index(deletedEdge[0]) #leftMarker is the index of the first node in the path that is incident to the edge being removed
     rightMarker = path.index(deletedEdge[1]) #rightMarker is the index of the node that is connected to the leftMarker node. Its edge is being removed
     #print("Old path: {}.".format(path))
-    if leftMarker == rightMarker - 1: #ensures that the edge being deleted is actually represented by the path list
+    if (leftMarker == rightMarker - 1) or (path[len(path)-1] == deletedEdge[0] and path[len(path)-2] == deletedEdge[1]): #ensures that the edge being deleted is actually represented by the path list
       leftNode = path[leftMarker]
       rightNode = path[rightMarker]
       wndw.create_line(graph[leftNode][0], graph[leftNode][1], graph[nextNode][0], graph[nextNode][1])
