@@ -28,8 +28,8 @@ def nearestNeighbor(graph, nameArray):
   root.title("Euclidean TSP Solver")
   w = Canvas(root, width = canvas_width, height = canvas_height)
   w.pack(expand = YES, fill=BOTH)
-  message = Label(root, text = "Example text")
-  message.pack(side=BOTTOM)
+  message = Label(root, text = "Nearest Neighbor")
+  message.pack(side=TOP)
   for pair in graph:
     w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
   # TKINTER #
