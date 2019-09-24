@@ -74,7 +74,6 @@ def step(graph, path, lineList, cost, itr, wndw):
     markerOne = path.index(deletedEdge[0]) #markerOne is the index of a node in the path that is incident to the edge being removed
     markerTwo = path.index(deletedEdge[1]) #markerTwo is the index of the node that is connected to the markerOne node. Its edge is being removed
     if markerOne == markerTwo - 1: #ensures that the edge being deleted is actually represented by the path list
-      print("1")
       leftNode = path[markerOne]
       rightNode = path[markerTwo]
       if deletedEdge in lineList.keys():
@@ -91,7 +90,6 @@ def step(graph, path, lineList, cost, itr, wndw):
       return (path, cost, lineList)
     
     elif markerOne == markerTwo + 1:
-      print("2")
       rightNode = path[markerOne]
       leftNode = path[markerTwo]
       if deletedEdge in lineList.keys():
@@ -108,7 +106,6 @@ def step(graph, path, lineList, cost, itr, wndw):
       return (path, cost, lineList)
 
     elif path[len(path)-1] == deletedEdge[0] and path[len(path)-2] == deletedEdge[1]:
-      print("3")
       leftNode = path[len(path)-2]
       rightNode = path[len(path)-1]
       if deletedEdge in lineList.keys():
