@@ -28,8 +28,6 @@ def nearestNeighbor(graph, nameArray):
   root.title("Euclidean TSP Solver")
   w = Canvas(root, width = canvas_width, height = canvas_height)
   w.pack(expand = YES, fill=BOTH)
-  message = Label(root, text = "Nearest Neighbor")
-  message.pack(side=TOP)
   for pair in graph:
     index = graph.index(pair)
     name = nameArray[index]
@@ -44,7 +42,7 @@ def nearestNeighbor(graph, nameArray):
   wg = weightedGraph(graph)
   i = 1
 
-  def stepper():
+  def stepper(): #callable function for the step button
     nonlocal i, path, cost, iterations, graph
     if i <= len(graph):
       path, cost, iterations = step(graph, path, cost, iterations, i, w)
@@ -53,23 +51,7 @@ def nearestNeighbor(graph, nameArray):
   # TKINTER #
   stepButton = Button(root, text = "Step", command = stepper)
   stepButton.pack(side = BOTTOM)
-  # TKINTER #
 
-  pathString = ""
-  pathString += nameArray[path[len(path)-1]] + " -> "
-  adjCost = cost + wg[path[0]][0]
-  endTime = time.time() - startTime
-
-  for i in range(0, len(path)-1):
-    pathString += nameArray[path[i]] + " -> "
-  pathString += nameArray[path[len(path)-1]]
-  graphSize = len(graph)
-
-  line1 = "\n\nThe optimal path in this {}-city instance using Nearest Neighbor is: \n{}\n\n".format(graphSize, pathString)
-  line2 = "This path costs {} units, and required {} iterations in {} seconds \n(running in (n - 1)^2 = n^2 time, where n is the number of cities)\n\n".format(adjCost, iterations, endTime)
-  print(line1 + line2)
-
-  # TKINTER #
   root.mainloop()
   # TKINTER #
   
