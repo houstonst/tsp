@@ -79,6 +79,7 @@ if __name__ == "__main__":
 # https://stackoverflow.com/questions/39888580/how-can-i-draw-a-point-with-canvas-in-tkinter
 # https://tkdocs.com/tutorial/canvas.html#creating
 # https://stackoverflow.com/questions/42333288/how-to-delete-lines-using-tkinter
+# https://stackoverflow.com/questions/17736967/python-how-to-add-text-inside-a-canvas
 
 # Algorithm References:
 # https://thispointer.com/python-how-to-add-append-key-value-pairs-in-dictionary-using-dict-update/
