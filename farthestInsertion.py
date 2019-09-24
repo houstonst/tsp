@@ -14,7 +14,7 @@ def initTour(weightedGraph): # Finds initial tour and cost between the two furth
       c = row.index(maxVal)
   return (maxVal*2, [r, c])
 
-def step(graph, path, cost, itr, wndw):
+def step(graph, path, lineList, cost, itr, wndw):
   wg = weightedGraph(graph)
 
   if itr == 1: #handles the very first button press
@@ -23,9 +23,11 @@ def step(graph, path, cost, itr, wndw):
     fst = iPath[0]
     snd = iPath[1]
     thd = iPath[2]
-    wndw.create_line(graph[fst][0], graph[fst][1], graph[snd][0], graph[snd][1])
-    wndw.create_line(graph[snd][0], graph[snd][1], graph[thd][0], graph[thd][1])
-    return (iPath, iCost)
+    a = wndw.create_line(graph[fst][0], graph[fst][1], graph[snd][0], graph[snd][1])
+    b = wndw.create_line(graph[snd][0], graph[snd][1], graph[thd][0], graph[thd][1])
+    lineList.update({(fst, snd): a})
+    lineList.update({(snd, fst): b})
+    return (iPath, iCost, lineList)
 
   elif itr < len(graph) + 1: #itr simultaneously represents the path length. Handles all remaining button presses
     #see which node not in the subtour has the greatest minimum distance to a node in the subtour
@@ -72,28 +74,55 @@ def step(graph, path, cost, itr, wndw):
     markerOne = path.index(deletedEdge[0]) #markerOne is the index of a node in the path that is incident to the edge being removed
     markerTwo = path.index(deletedEdge[1]) #markerTwo is the index of the node that is connected to the markerOne node. Its edge is being removed
     if markerOne == markerTwo - 1: #ensures that the edge being deleted is actually represented by the path list
+      print("1")
       leftNode = path[markerOne]
       rightNode = path[markerTwo]
-      wndw.create_line(graph[leftNode][0], graph[leftNode][1], graph[nextNode][0], graph[nextNode][1])
-      wndw.create_line(graph[rightNode][0], graph[rightNode][1], graph[nextNode][0], graph[nextNode][1])
+      if deletedEdge in lineList.keys():
+        wndw.delete(lineList[deletedEdge])
+        del lineList[deletedEdge]
+      else:
+        wndw.delete(lineList[(deletedEdge[1], deletedEdge[0])])
+        del lineList[(deletedEdge[1], deletedEdge[0])]
+      a = wndw.create_line(graph[leftNode][0], graph[leftNode][1], graph[nextNode][0], graph[nextNode][1])
+      b = wndw.create_line(graph[rightNode][0], graph[rightNode][1], graph[nextNode][0], graph[nextNode][1])
+      lineList.update({(leftNode, nextNode): a})
+      lineList.update({(rightNode, nextNode): b})
       path.insert(markerOne + 1, nextNode)
-      return (path, cost)
+      return (path, cost, lineList)
     
     elif markerOne == markerTwo + 1:
+      print("2")
       rightNode = path[markerOne]
       leftNode = path[markerTwo]
-      wndw.create_line(graph[leftNode][0], graph[leftNode][1], graph[nextNode][0], graph[nextNode][1])
-      wndw.create_line(graph[rightNode][0], graph[rightNode][1], graph[nextNode][0], graph[nextNode][1])
+      if deletedEdge in lineList.keys():
+        wndw.delete(lineList[deletedEdge])
+        del lineList[deletedEdge]
+      else:
+        wndw.delete(lineList[(deletedEdge[1], deletedEdge[0])])
+        del lineList[(deletedEdge[1], deletedEdge[0])]
+      a = wndw.create_line(graph[leftNode][0], graph[leftNode][1], graph[nextNode][0], graph[nextNode][1])
+      b = wndw.create_line(graph[rightNode][0], graph[rightNode][1], graph[nextNode][0], graph[nextNode][1])
+      lineList.update({(leftNode, nextNode): a})
+      lineList.update({(rightNode, nextNode): b})
       path.insert(markerOne, nextNode)
-      return (path, cost)
+      return (path, cost, lineList)
 
     elif path[len(path)-1] == deletedEdge[0] and path[len(path)-2] == deletedEdge[1]:
+      print("3")
       leftNode = path[len(path)-2]
       rightNode = path[len(path)-1]
-      wndw.create_line(graph[leftNode][0], graph[leftNode][1], graph[nextNode][0], graph[nextNode][1])
-      wndw.create_line(graph[rightNode][0], graph[rightNode][1], graph[nextNode][0], graph[nextNode][1])
+      if deletedEdge in lineList.keys():
+        wndw.delete(lineList[deletedEdge])
+        del lineList[deletedEdge]
+      else:
+        wndw.delete(lineList[(deletedEdge[1], deletedEdge[0])])
+        del lineList[(deletedEdge[1], deletedEdge[0])]
+      a = wndw.create_line(graph[leftNode][0], graph[leftNode][1], graph[nextNode][0], graph[nextNode][1])
+      b = wndw.create_line(graph[rightNode][0], graph[rightNode][1], graph[nextNode][0], graph[nextNode][1])
+      lineList.update({(leftNode, nextNode): a})
+      lineList.update({(rightNode, nextNode): b})
       path.insert(len(path) - 1, nextNode)
-      return (path, cost)
+      return (path, cost, lineList)
 
     else:
       print("error")
@@ -115,13 +144,14 @@ def farthestInsertion(graph, nameArray):
   startTime = time.time()
   path = []
   cost = 0.0
+  lineList = {}
   wg = weightedGraph(graph)
   i = 1
 
   def stepper():
-    nonlocal i, path, cost, graph
+    nonlocal i, path, lineList, cost, graph
     if i <= len(graph):
-      path, cost = step(graph, path, cost, i, w)
+      path, cost, lineList = step(graph, path, lineList, cost, i, w)
       i += 1
 
   stepButton = Button(root, text = "Step", command = stepper)
