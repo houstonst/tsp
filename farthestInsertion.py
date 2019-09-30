@@ -127,7 +127,7 @@ def step(graph, path, lineList, cost, itr, wndw):
 def farthestInsertion(graph, nameArray):
   # TKINTER #
   root = Tk()
-  canvas_height = 800
+  canvas_height = 750
   canvas_width = 1200
   root.title("Euclidean TSP Solver")
   root.iconbitmap('favicon.ico')
