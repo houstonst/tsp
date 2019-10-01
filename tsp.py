@@ -2,6 +2,8 @@ import csv
 from bruteForce import *
 from nearestNeighbor import *
 from farthestInsertion import *
+from randomTour import *
+from twoOpt import *
 from tkinter import *
 
 def main():
@@ -43,6 +45,7 @@ Enter a CSV file ["example.csv"]:
 1: Brute Force
 2: Nearest Neighbor
 3: Farthest Insertion
+4: Two Opt Interchange
 
 
 Enter an algorithm by its number:
@@ -52,7 +55,7 @@ Enter an algorithm by its number:
     print("\n")
     print("---------------------------------------------------------------------------------------------\n\n")
 
-    if algo == "1" or algo == "2" or algo == "3":
+    if algo == "1" or algo == "2" or algo == "3" or algo == "4":
       if algo == "1":
         path = bruteForce(coords, cityNames) # path is the same as the path variable in the algorithm's file
         last = coords[path[len(path)-1]] # the last node touched in the path
@@ -65,6 +68,9 @@ Enter an algorithm by its number:
         nearestNeighbor(coords, cityNames)
       elif algo == "3":
         farthestInsertion(coords, cityNames)
+      elif algo == "4":
+        randPath, randCost = randomTour(coords, cityNames)
+        twoOpt(coords, cityNames, randPath, randCost)
     else:
       print("Enter an algorithm number given by the list above")
 

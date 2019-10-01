@@ -3,7 +3,7 @@ from euclidean import *
 from tkinter import *
 from tsp import *
 
-def initTour(weightedGraph): # Finds initial tour and cost between the two furthest away points
+def initTour(weightedGraph): #finds initial tour and cost between the two furthest away points
   maxVal = 0                 
   r = 0
   c = 0

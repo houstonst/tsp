@@ -20,4 +20,4 @@ def randomTour(graph, nameArray):
   for i in range(0, len(path)-1):
     cost += wg[path[i]][path[i+1]]
 
-  return (path, cost)
+  return path, cost
