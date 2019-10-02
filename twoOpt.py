@@ -3,28 +3,47 @@ from euclidean import *
 from tkinter import *
 from tsp import *
 
-def step(wg, path, cost):
+def step(wg, path, cost, unchanged, i, j, lineList, wndw, graph):
   pathCopy = path
   costCopy = cost
-  unchanged = False
 
-  while unchanged == False: #isn't breaking out of while loop when no change occurs?
-    unchanged = True
-    for i in range(0, (len(pathCopy)-1)):
-      for j in range(0, len(pathCopy)-1):
-        if i < j and (i != j-1 or i != j+1):
-          a = pathCopy[i]
-          b = pathCopy[i+1]
-          m = pathCopy[j]
-          n = pathCopy[j+1]
-          oCost = wg[a][b] + wg[m][n]
-          pCost = wg[a][m] + wg[b][n]
-          if pCost < oCost:
-            pathCopySlice = pathCopy[i+1:j]
-            pathCopy = pathCopy[0:i+1] + [pathCopy[j]] + pathCopySlice[::-1] + pathCopy[j+1:]
-            costCopy = costCopy - oCost + pCost
-            unchanged = False
-  return pathCopy, costCopy
+  print(unchanged)
+  if unchanged == False: #isn't breaking out of while loop when no change occurs?
+    print("here")
+    #unchanged = True
+    print(i)
+    print(j)
+    if i < j and (i != j-1 or i != j+1):
+      print("now here")
+      a = pathCopy[i]
+      b = pathCopy[i+1]
+      m = pathCopy[j]
+      n = pathCopy[j+1]
+      oCost = wg[a][b] + wg[m][n]
+      pCost = wg[a][m] + wg[b][n]
+      if pCost < oCost:
+        if (a, b) in lineList.keys():
+          wndw.delete(lineList[(a, b)])
+          del lineList[(a, b)]
+        elif (b, a) in lineList.keys():
+          wndw.delete(lineList[(b, a)])
+          del lineList[(b, a)]
+        if (m, n) in lineList.keys():
+          wndw.delete(lineList[(m, n)])
+          del lineList[(m, n)]
+        elif (n, m) in lineList.keys():
+          wndw.delete(lineList[(n, m)])
+          del lineList[(n, m)] 
+        x = wndw.create_line(graph[a][0], graph[a][1], graph[m][0], graph[m][1])
+        y = wndw.create_line(graph[b][0], graph[b][1], graph[n][0], graph[n][1])
+        lineList.update({(a, m): x})
+        lineList.update({(b, n): y})
+
+        pathCopySlice = pathCopy[i+1:j]
+        pathCopy = pathCopy[0:i+1] + [pathCopy[j]] + pathCopySlice[::-1] + pathCopy[j+1:]
+        costCopy = costCopy - oCost + pCost
+        unchanged = False
+  return pathCopy, costCopy, unchanged, lineList
 
 def twoOpt(graph, nameArray, path, cost): #run until no improvement is made
   # TKINTER #
@@ -45,30 +64,45 @@ def twoOpt(graph, nameArray, path, cost): #run until no improvement is made
   wg = weightedGraph(graph)
   pathCopy = path
   costCopy = cost
+  unchanged = False
+  lineList = {}
+  i = 0
+  j = 2
 
-  # last = graph[path[len(path)-1]] # the last node touched in the path
-  # for i in range(len(path)-1):
-  #   node = path[i]
-  #   nxt = path[i+1]
-  #   w.create_line(graph[node][0], graph[node][1], graph[nxt][0], graph[nxt][1], fill = "red")
-  # w.create_line(graph[path[0]][0], graph[path[0]][1], last[0], last[1], fill = "red")
+  last = graph[path[len(path)-1]] # the last node touched in the path
+  for z in range(len(path)-1):
+    node = path[z]
+    nxt = path[z+1]
+    a = w.create_line(graph[node][0], graph[node][1], graph[nxt][0], graph[nxt][1], fill = "black")
+    lineList.update({(node, nxt): a})
+  a = w.create_line(graph[path[0]][0], graph[path[0]][1], last[0], last[1], fill = "black")
+  lineList.update({(path[0], path[len(path)-1])})
+  
+  def stepper():
+    nonlocal i, j, pathCopy, costCopy, unchanged, graph, lineList
+    if j < len(graph):
+      pathCopy, costCopy, unchanged, lineList = step(wg, pathCopy, costCopy, unchanged, i, j, lineList, w, graph)
+      j += 1
+    elif j == len(graph) and i < len(graph)-3:
+      i += 1
+      j = i + 2
+      pathCopy, costCopy, unchanged, lineList = step(wg, pathCopy, costCopy, unchanged, i, j, lineList, w, graph)
+    if i == len(graph):
+      i = 0
+      j = 2
+      pathCopy, costCopy, unchanged, lineList = step(wg, pathCopy, costCopy, unchanged, i, j, lineList, w, graph)
 
-  print(path)
-  print(cost)
-
-  pathCopy, costCopy = step(wg, pathCopy, costCopy)
-
-  print(pathCopy)
-  print(costCopy)
-
-  last = graph[pathCopy[len(pathCopy)-1]] # the last node touched in the pathCopy
-  for i in range(len(pathCopy)-1):
-    node = pathCopy[i]
-    nxt = pathCopy[i+1]
-    w.create_line(graph[node][0], graph[node][1], graph[nxt][0], graph[nxt][1])
-  w.create_line(graph[pathCopy[0]][0], graph[pathCopy[0]][1], last[0], last[1]) # routes back to the beginning of the path
+  # last = graph[pathCopy[len(pathCopy)-1]] # the last node touched in the pathCopy
+  # for i in range(len(pathCopy)-1):
+  #   node = pathCopy[i]
+  #   nxt = pathCopy[i+1]
+  #   w.create_line(graph[node][0], graph[node][1], graph[nxt][0], graph[nxt][1])
+  # w.create_line(graph[pathCopy[0]][0], graph[pathCopy[0]][1], last[0], last[1]) # routes back to the beginning of the path
 
   # TKINTER #
+  stepButton = Button(root, text = "Step", command = stepper)
+  stepButton.pack(side = BOTTOM)
+
   root.mainloop()
   # TKINTER #
 
