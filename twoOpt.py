@@ -3,6 +3,29 @@ from euclidean import *
 from tkinter import *
 from tsp import *
 
+def step(wg, path, cost):
+  pathCopy = path
+  costCopy = cost
+  unchanged = False
+
+  while unchanged == False: #isn't breaking out of while loop when no change occurs?
+    unchanged = True
+    for i in range(0, (len(pathCopy)-1)):
+      for j in range(0, len(pathCopy)-1):
+        if i < j and (i != j-1 or i != j+1):
+          a = pathCopy[i]
+          b = pathCopy[i+1]
+          m = pathCopy[j]
+          n = pathCopy[j+1]
+          oCost = wg[a][b] + wg[m][n]
+          pCost = wg[a][m] + wg[b][n]
+          if pCost < oCost:
+            pathCopySlice = pathCopy[i+1:j]
+            pathCopy = pathCopy[0:i+1] + [pathCopy[j]] + pathCopySlice[::-1] + pathCopy[j+1:]
+            costCopy = costCopy - oCost + pCost
+            unchanged = False
+  return pathCopy, costCopy
+
 def twoOpt(graph, nameArray, path, cost): #run until no improvement is made
   # TKINTER #
   root = Tk()
@@ -22,27 +45,18 @@ def twoOpt(graph, nameArray, path, cost): #run until no improvement is made
   wg = weightedGraph(graph)
   pathCopy = path
   costCopy = cost
-  unchanged = False
+
+  # last = graph[path[len(path)-1]] # the last node touched in the path
+  # for i in range(len(path)-1):
+  #   node = path[i]
+  #   nxt = path[i+1]
+  #   w.create_line(graph[node][0], graph[node][1], graph[nxt][0], graph[nxt][1], fill = "red")
+  # w.create_line(graph[path[0]][0], graph[path[0]][1], last[0], last[1], fill = "red")
 
   print(path)
   print(cost)
-  
-  while (unchanged == False):
-    unchanged = True
-    for i in range(0, (len(pathCopy)-1)//2):
-      for j in range(0, len(pathCopy)-1):
-        if i != j and (i != j-1 or i != j+1):
-          a = pathCopy[i]
-          b = pathCopy[i+1]
-          m = pathCopy[j]
-          n = pathCopy[j+1]
-          oCost = wg[a][b] + wg[m][n]
-          pCost = wg[a][m] + wg[b][n]
-          if pCost < oCost:
-            pathCopySlice = pathCopy[i+1:j]
-            pathCopy = pathCopy[0:i+1] + [pathCopy[j]] + pathCopySlice[::-1] + pathCopy[j+1:]
-            costCopy = costCopy - oCost + pCost
-            #unchanged = False
+
+  pathCopy, costCopy = step(wg, pathCopy, costCopy)
 
   print(pathCopy)
   print(costCopy)
