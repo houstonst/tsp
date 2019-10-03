@@ -115,7 +115,7 @@ def twoOpt(graph, nameArray, path, cost):
         w.itemconfig(lineList[(d, c)], fill = "black")
 
       pathCopy, costCopy, unchanged, lineList = step(wg, pathCopy, costCopy, unchanged, i, j, lineList, w, graph)
-    if i == len(graph):
+    if i == len(graph)-3:
       i = 0
       j = 2
 
@@ -144,7 +144,11 @@ def twoOpt(graph, nameArray, path, cost):
       u = 0
       v = 2
 
-    if v < len(graph)-3: #better handle this case!!!! Causes instances without highlighting
+    # if v < len(graph)-3: #better handle this case!!!! Causes instances without highlighting
+    print(u)
+    print(v)
+    
+    if v <= len(graph)-2:
       a = pathCopy[u]
       b = pathCopy[u+1]
       c = pathCopy[v]
