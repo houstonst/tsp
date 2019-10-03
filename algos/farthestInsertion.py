@@ -1,5 +1,5 @@
 import operator, time, math
-from euclidean import *
+from algos.euclidean import *
 from tkinter import *
 from tsp import *
 
@@ -130,7 +130,7 @@ def farthestInsertion(graph, nameArray):
   canvas_height = 750
   canvas_width = 1200
   root.title("Euclidean TSP Solver")
-  root.iconbitmap('favicon.ico')
+  root.iconbitmap('./graphics/favicon.ico')
   w = Canvas(root, width = canvas_width, height = canvas_height)
   w.pack(expand = YES, fill=BOTH)
   for pair in graph:

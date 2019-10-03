@@ -1,5 +1,5 @@
 import operator, time, math, random
-from euclidean import *
+from algos.euclidean import *
 
 def randomTour(graph, nameArray):
   path = []

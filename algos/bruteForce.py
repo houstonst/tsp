@@ -1,5 +1,5 @@
 import operator, time, math
-from euclidean import *
+from algos.euclidean import *
 
 def bruteForce(graph, nameArray): #return the optimal hamiltonian cycle of a complete graph in O(n!) time
   startTime = time.time()

@@ -1,9 +1,9 @@
 import csv
-from bruteForce import *
-from nearestNeighbor import *
-from farthestInsertion import *
-from randomTour import *
-from twoOpt import *
+from algos.bruteForce import *
+from algos.nearestNeighbor import *
+from algos.farthestInsertion import *
+from algos.randomTour import *
+from algos.twoOpt import *
 from tkinter import *
 
 def main():
@@ -18,7 +18,8 @@ Output: A hamiltonian cycle and complexity data
 
 Enter a CSV file ["example.csv"]: 
 """)
-  file = input()
+  inp = "./tests/" + input()
+  file = inp
   cityNames = []
   coords = []
   print("---------------------------------------------------------------------------------------------\n\n")
