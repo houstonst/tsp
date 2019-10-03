@@ -7,14 +7,8 @@ def step(wg, path, cost, unchanged, i, j, lineList, wndw, graph):
   pathCopy = path
   costCopy = cost
 
-  print(unchanged)
-  if unchanged == False: #isn't breaking out of while loop when no change occurs?
-    print("here")
-    #unchanged = True
-    print(i)
-    print(j)
+  if unchanged == False:
     if i < j and (i != j-1 or i != j+1):
-      print("now here")
       a = pathCopy[i]
       b = pathCopy[i+1]
       m = pathCopy[j]
@@ -45,7 +39,7 @@ def step(wg, path, cost, unchanged, i, j, lineList, wndw, graph):
         unchanged = False
   return pathCopy, costCopy, unchanged, lineList
 
-def twoOpt(graph, nameArray, path, cost): #run until no improvement is made
+def twoOpt(graph, nameArray, path, cost):
   # TKINTER #
   root = Tk()
   canvas_height = 750
@@ -69,7 +63,7 @@ def twoOpt(graph, nameArray, path, cost): #run until no improvement is made
   i = 0
   j = 2
 
-  last = graph[path[len(path)-1]] # the last node touched in the path
+  last = graph[path[len(path)-1]] #the last node touched in the path
   for z in range(len(path)-1):
     node = path[z]
     nxt = path[z+1]
@@ -91,13 +85,6 @@ def twoOpt(graph, nameArray, path, cost): #run until no improvement is made
       i = 0
       j = 2
       pathCopy, costCopy, unchanged, lineList = step(wg, pathCopy, costCopy, unchanged, i, j, lineList, w, graph)
-
-  # last = graph[pathCopy[len(pathCopy)-1]] # the last node touched in the pathCopy
-  # for i in range(len(pathCopy)-1):
-  #   node = pathCopy[i]
-  #   nxt = pathCopy[i+1]
-  #   w.create_line(graph[node][0], graph[node][1], graph[nxt][0], graph[nxt][1])
-  # w.create_line(graph[pathCopy[0]][0], graph[pathCopy[0]][1], last[0], last[1]) # routes back to the beginning of the path
 
   # TKINTER #
   stepButton = Button(root, text = "Step", command = stepper)

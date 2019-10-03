@@ -7,20 +7,11 @@ from twoOpt import *
 from tkinter import *
 
 def main():
-  # root = Tk()
-  # canvas_height = 700
-  # canvas_width = 1200
-  # root.title("Euclidean TSP Solver")
-  # w = Canvas(root, width = canvas_width, height = canvas_height)
-  # w.pack(expand = YES, fill=BOTH)
-  # message = Label(root, text = "Example text")
-  # message.pack(side=BOTTOM)
-
   print("""
 EUCLIDEAN TSP SOLVER:
 
 Author: Matt Houston
-Last Edited: 16 SEPTEMBER 2019
+Last Edited: 02 OCTOBER 2019
 Filename: tsp.py
 Input: CSV file, formatted in: City Name, Longitude, Latitude
 Output: A hamiltonian cycle and complexity data
@@ -38,8 +29,6 @@ Enter a CSV file ["example.csv"]:
       rowArray = row.split(",")
       coords.append([int(rowArray[1]), int(rowArray[2])])
       cityNames.append(rowArray[0])
-    # for pair in coords:
-    #   w.create_oval((pair[0], pair[1], pair[0] + 5, pair[1] + 5), fill = "red")
     print("---------------------------------------------------------------------------------------------\n\n")
     print("""
 1: Brute Force
@@ -73,8 +62,6 @@ Enter an algorithm by its number:
         twoOpt(coords, cityNames, randPath, randCost)
     else:
       print("Enter an algorithm number given by the list above")
-
-  #root.mainloop()
   
 if __name__ == "__main__":
   main()
