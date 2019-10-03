@@ -148,20 +148,19 @@ def twoOpt(graph, nameArray, path, cost):
     print(u)
     print(v)
     
-    if v <= len(graph)-2:
-      a = pathCopy[u]
-      b = pathCopy[u+1]
-      c = pathCopy[v]
-      d = pathCopy[v+1]
+    a = pathCopy[u]
+    b = pathCopy[u+1]
+    c = pathCopy[v]
+    d = pathCopy[v+1]
 
-      if (a, b) in lineList.keys():
-        w.itemconfig(lineList[(a, b)], fill = "red")
-      elif (b, a) in lineList.keys():
-        w.itemconfig(lineList[(b, a)], fill = "red")
-      if (c, d) in lineList.keys():
-        w.itemconfig(lineList[(c, d)], fill = "red")
-      elif (d, c) in lineList.keys():
-        w.itemconfig(lineList[(d, c)], fill = "red")
+    if (a, b) in lineList.keys():
+      w.itemconfig(lineList[(a, b)], fill = "red")
+    elif (b, a) in lineList.keys():
+      w.itemconfig(lineList[(b, a)], fill = "red")
+    if (c, d) in lineList.keys():
+      w.itemconfig(lineList[(c, d)], fill = "red")
+    elif (d, c) in lineList.keys():
+      w.itemconfig(lineList[(d, c)], fill = "red")
 
   # TKINTER #
   stepButton = Button(root, text = "Step", command = stepper)
