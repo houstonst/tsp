@@ -79,11 +79,8 @@ def twoOpt(graph, nameArray, path, cost):
   
   def stepper(): #need to return for entire file
     nonlocal i, j, pathCopy, costCopy, unchanged, graph, lineList
-    print(i)
-    print(j)
-    print(unchanged)
 
-    if i == len(graph)-3 and j == len(graph)-1 and unchanged == True:
+    if i == len(graph)-4 and j == len(graph)-1 and unchanged == True:
       print(pathCopy)
       print(costCopy)
       return pathCopy, costCopy

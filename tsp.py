@@ -11,7 +11,7 @@ def main():
 EUCLIDEAN TSP SOLVER:
 
 Author: Matt Houston
-Last Edited: 02 OCTOBER 2019
+Last Edited: 03 OCTOBER 2019
 Filename: tsp.py
 Input: CSV file, formatted in: City Name, Longitude, Latitude
 Output: A hamiltonian cycle and complexity data
