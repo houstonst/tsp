@@ -4,6 +4,7 @@ from algos.nearestNeighbor import *
 from algos.farthestInsertion import *
 from algos.randomTour import *
 from algos.twoOpt import *
+from algos.linKernighan import *
 from tkinter import *
 
 def main():
@@ -11,7 +12,7 @@ def main():
 EUCLIDEAN TSP SOLVER:
 
 Author: Matt Houston
-Last Edited: 03 OCTOBER 2019
+Last Edited: 08 OCTOBER 2019
 Filename: tsp.py
 Input: CSV file, formatted in: City Name, Longitude, Latitude
 Output: A hamiltonian cycle and complexity data
@@ -36,16 +37,18 @@ Enter a CSV file ["example.csv"]:
 2: Nearest Neighbor
 3: Farthest Insertion
 4: Two Opt Interchange
+5: Lin-Kernighan
 
 
 Enter an algorithm by its number:
 """)
     algo = input()
+    algoPicks = "12345"
 
     print("\n")
     print("---------------------------------------------------------------------------------------------\n\n")
 
-    if algo == "1" or algo == "2" or algo == "3" or algo == "4":
+    if algo in algoPicks:
       if algo == "1":
         path = bruteForce(coords, cityNames) # path is the same as the path variable in the algorithm's file
         last = coords[path[len(path)-1]] # the last node touched in the path
@@ -61,9 +64,11 @@ Enter an algorithm by its number:
       elif algo == "4":
         randPath, randCost = randomTour(coords, cityNames)
         twoOpt(coords, cityNames, randPath, randCost)
+      elif algo == "5":
+        initPath, initCost = randomTour(coords, cityNames)
+        linKernighan(coords, cityNames, initPath, initCost)
     else:
-      print("Enter an algorithm number given by the list above")
-  
+      print("Exiting. Must enter an algorithm number given by the list above")
 if __name__ == "__main__":
   main()
   print("---------------------------------------------------------------------------------------------\n\n")
