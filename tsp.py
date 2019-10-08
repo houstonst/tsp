@@ -4,6 +4,7 @@ from algos.nearestNeighbor import *
 from algos.farthestInsertion import *
 from algos.randomTour import *
 from algos.twoOpt import *
+from algos.threeOpt import *
 from algos.linKernighan import *
 from tkinter import *
 
@@ -37,7 +38,8 @@ Enter a CSV file ["example.csv"]:
 2: Nearest Neighbor
 3: Farthest Insertion
 4: Two Opt Interchange
-5: Lin-Kernighan
+5: Three Opt Interchange (In Progress)
+6: Lin-Kernighan (In Progress)
 
 
 Enter an algorithm by its number:
@@ -59,6 +61,9 @@ Enter an algorithm by its number:
         randPath, randCost = randomTour(coords, cityNames)
         twoOpt(coords, cityNames, randPath, randCost)
       elif algo == "5":
+        randPath, randCost = randomTour(coords, cityNames)
+        threeOpt(coords, cityNames, randPath, randCost)
+      elif algo == "6":
         initPath, initCost = randomTour(coords, cityNames)
         linKernighan(coords, cityNames, initPath, initCost)
     else:
