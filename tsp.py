@@ -81,4 +81,3 @@ if __name__ == "__main__":
 
 # Algorithm References:
 # https://thispointer.com/python-how-to-add-append-key-value-pairs-in-dictionary-using-dict-update/
-# https://en.wikipedia.org/wiki/3-opt
