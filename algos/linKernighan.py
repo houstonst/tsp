@@ -37,7 +37,7 @@ def linKernighan(graph, nameArray, initPath, initCost):
   outerLoop(graph, initPath, w, lineList)
 
   # TKINTER #
-  root.mainloop()
+  #root.mainloop()
   # TKINTER #
 
 def outerLoop(graph, initPath, w, lineList): #step 1
@@ -55,7 +55,7 @@ def outerLoop(graph, initPath, w, lineList): #step 1
       u1 = v+1 #second edge incident with v
 
     edgeScan(v, u0, graph, initPath, wg, w, lineList)
-    #edgeScan(v, u1, graph, initPath, wg, w, lineList)
+    edgeScan(v, u1, graph, initPath, wg, w, lineList)
 
 def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
   u0 = u
@@ -64,15 +64,19 @@ def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
   u0val = path[u0] #make these since they'll be deleted immediatley below
   vval = path[v]
 
-  if u0 == len(path)-2:
+  if u0 == len(path)-2 and v == 0:
     path = path[:len(path)-1]
+  elif u0 == len(path)-2 and v == len(path)-3:
+    sec = path[:u0]
+    path = sec[::-1] + path[u0]
   elif u0 < v: #delete edge (u0, v)
-    path = path[:u0] + path[v:]
+    sec1 = path[1:v]
+    sec2 = path[v:]
+    path = sec2 + sec1
   else:
-    path = path[:v] + path[u0:]
-    path = path[::-1] #reversed so that v's corresponding node is still at the start of the path
-
-  print("path after deletion: {}".format(path))
+    sec1 = path[1:u0]
+    sec2 = path[u0:]
+    path = sec1[::-1] + sec2[::-1] #reversed so that v's corresponding node is still at the start of the path
 
   if (u0val, vval) in lineList.keys():
     w.delete(lineList[(u0val, vval)])
@@ -83,13 +87,9 @@ def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
   
   dPath = []
   for w0 in range(0, len(origPath)-1): #add edge (w0, u0)
-    print("w0: {}, u0: {}".format(origPath[w0], u0val))
     if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
-      print("entered edge condition")
       if wg[origPath[w0]][u0val] <= wg[vval][u0val]: #if cost condition met, add the edge
-        print("entered cost condition")
         newEdge = [origPath[w0], u0val]
-        print("newEdge: {}".format(newEdge))
         #add edge (w0, u0). Find u0's position then insert w0 immediately before.
         #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
         dPath = path + [origPath[w0]]
