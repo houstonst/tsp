@@ -44,7 +44,7 @@ def outerLoop(graph, initPath, w, lineList): #step 1
   wg = weightedGraph(graph)
   bestTour = initPath
 
-  for v in range(0, 1): #for each node v of G. Do not evaluate last path value since it's the same as path[0]
+  for v in range(0, len(initPath)-2): #for each node v of G. Do not evaluate last path value since it's the same as path[0]
     u0 = 0 #initialize
     u1 = 0
     if v == 0: #special case since initPath[0] == initPath[last]
@@ -54,6 +54,7 @@ def outerLoop(graph, initPath, w, lineList): #step 1
       u0 = v-1 #first edge incident with v
       u1 = v+1 #second edge incident with v
 
+    print("v: {}, u0: {}, u1: {}".format(v, u0, u1))
     edgeScan(v, u0, graph, initPath, wg, w, lineList)
     edgeScan(v, u1, graph, initPath, wg, w, lineList)
 
@@ -68,7 +69,7 @@ def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
     path = path[:len(path)-1]
   elif u0 == len(path)-2 and v == len(path)-3:
     sec = path[:u0]
-    path = sec[::-1] + path[u0]
+    path = sec[::-1] + [path[u0]]
   elif u0 < v: #delete edge (u0, v)
     sec1 = path[1:v]
     sec2 = path[v:]
