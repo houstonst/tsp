@@ -45,7 +45,7 @@ Enter a CSV file ["example.csv"]:
 Enter an algorithm by its number:
 """)
     algo = input()
-    algoPicks = "12345"
+    algoPicks = "123456"
 
     print("\n")
     print("---------------------------------------------------------------------------------------------\n\n")
