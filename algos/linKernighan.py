@@ -54,8 +54,8 @@ def outerLoop(graph, initPath, w, lineList): #step 1
       u0 = v-1 #first edge incident with v
       u1 = v+1 #second edge incident with v
 
-    #edgeScan(v, u0, graph, initPath, wg, w, lineList)
-    edgeScan(v, u1, graph, initPath, wg, w, lineList)
+    edgeScan(v, u0, graph, initPath, wg, w, lineList)
+    #edgeScan(v, u1, graph, initPath, wg, w, lineList)
 
 def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
   u0 = u
@@ -64,7 +64,9 @@ def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
   u0val = path[u0] #make these since they'll be deleted immediatley below
   vval = path[v]
 
-  if u0 < v: #delete edge (u0, v)
+  if u0 == len(path)-2:
+    path = path[:len(path)-1]
+  elif u0 < v: #delete edge (u0, v)
     path = path[:u0] + path[v:]
   else:
     path = path[:v] + path[u0:]
@@ -73,11 +75,9 @@ def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
   print("path after deletion: {}".format(path))
 
   if (u0val, vval) in lineList.keys():
-    print("here")
     w.delete(lineList[(u0val, vval)])
     del lineList[(u0val, vval)]
   elif (vval, u0val) in lineList.keys():
-    print("stillHere")
     w.delete(lineList[(vval, u0val)])
     del lineList[(vval, u0val)]
   
@@ -92,7 +92,7 @@ def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
         print("newEdge: {}".format(newEdge))
         #add edge (w0, u0). Find u0's position then insert w0 immediately before.
         #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
-        dpath = path + [origPath[w0]]
+        dPath = path + [origPath[w0]]
         w.create_line(graph[u0val][0], graph[u0val][1], graph[origPath[w0]][0], graph[origPath[w0]][1])
         break
   print("dPath: {}".format(dPath))
