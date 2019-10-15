@@ -12,13 +12,13 @@ def linKernighan(graph, nameArray, initPath, initCost):
   canvas_width = 1200
   root.title("Euclidean TSP Solver")
   root.iconbitmap('./graphics/favicon.ico')
-  w = Canvas(root, width = canvas_width, height = canvas_height)
-  w.pack(expand = YES, fill=BOTH)
+  wndw = Canvas(root, width = canvas_width, height = canvas_height)
+  wndw.pack(expand = YES, fill=BOTH)
   for pair in graph:
     index = graph.index(pair)
     name = nameArray[index]
-    w.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
-    w.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
+    wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
+    wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
   # TKINTER #
 
   lineList = {}
@@ -26,24 +26,25 @@ def linKernighan(graph, nameArray, initPath, initCost):
   for i in range(0, len(initPath)-2): #display initPath
     a = initPath[i]
     b = initPath[i+1]
-    line = w.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+    line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
     lineList.update({(a, b): line})
   first = initPath[0]
   last = initPath[len(initPath)-2]
-  line = w.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+  line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
   lineList.update({(first, last): line})
 
   print("starting path: {}".format(initPath))
-  outerLoop(graph, initPath, w, lineList)
+  outerLoop(graph, initPath, wndw, lineList)
 
   # TKINTER #
   #root.mainloop()
   # TKINTER #
 
-def outerLoop(graph, initPath, w, lineList): #step 1
+def outerLoop(graph, initPath, wndw, lineList): #step 1
   wg = weightedGraph(graph)
   bestTour = initPath
-
+  
+  #for v in range(1, 2): #testing
   for v in range(0, len(initPath)-2): #for each node v of G. Do not evaluate last path value since it's the same as path[0]
     u0 = 0 #initialize
     u1 = 0
@@ -54,11 +55,10 @@ def outerLoop(graph, initPath, w, lineList): #step 1
       u0 = v-1 #first edge incident with v
       u1 = v+1 #second edge incident with v
 
-    print("v: {}, u0: {}, u1: {}".format(v, u0, u1))
-    edgeScan(v, u0, graph, initPath, wg, w, lineList)
-    edgeScan(v, u1, graph, initPath, wg, w, lineList)
+    edgeScan(v, u0, graph, initPath, wg, wndw, lineList)
+    edgeScan(v, u1, graph, initPath, wg, wndw, lineList)
 
-def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
+def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
   u0 = u
 
   origPath = path
@@ -80,10 +80,10 @@ def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
     path = sec1[::-1] + sec2[::-1] #reversed so that v's corresponding node is still at the start of the path
 
   if (u0val, vval) in lineList.keys():
-    w.delete(lineList[(u0val, vval)])
+    wndw.delete(lineList[(u0val, vval)])
     del lineList[(u0val, vval)]
   elif (vval, u0val) in lineList.keys():
-    w.delete(lineList[(vval, u0val)])
+    wndw.delete(lineList[(vval, u0val)])
     del lineList[(vval, u0val)]
   
   dPath = []
@@ -91,10 +91,29 @@ def edgeScan(v, u, graph, path, wg, w, lineList): #step 2
     if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
       if wg[origPath[w0]][u0val] <= wg[vval][u0val]: #if cost condition met, add the edge
         newEdge = [origPath[w0], u0val]
+        
         #add edge (w0, u0). Find u0's position then insert w0 immediately before.
         #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
         dPath = path + [origPath[w0]]
-        w.create_line(graph[u0val][0], graph[u0val][1], graph[origPath[w0]][0], graph[origPath[w0]][1])
+        wndw.create_line(graph[u0val][0], graph[u0val][1], graph[origPath[w0]][0], graph[origPath[w0]][1])
         break
+
   print("dPath: {}".format(dPath))
+  testTour(dPath, wg)
+
+def testTour(dPath, wg): #step 3
+  if len(dPath) > 0:
+    w = dPath[len(dPath)-1] #w is the node that is encountered twice
+    w = dPath.index(w) #w is now the index of that node
+    r = w + 1
+
+    sec = dPath[r:len(dPath)-1]
+    path = dPath[:w+1] + sec[::-1] + [dPath[0]] #creates tour that breaks the cycle and returns to start
+
+    cost = 0.0
+    for i in range(0, len(path)-1):
+      cost += wg[path[i]][path[i+1]]
+
+    print("new tour: {}, new cost: {}".format(path, cost))
+
 
