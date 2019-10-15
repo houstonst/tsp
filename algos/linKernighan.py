@@ -91,29 +91,50 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
     if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
       if wg[origPath[w0]][u0val] <= wg[vval][u0val]: #if cost condition met, add the edge
         newEdge = [origPath[w0], u0val]
-        
+
         #add edge (w0, u0). Find u0's position then insert w0 immediately before.
         #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
         dPath = path + [origPath[w0]]
         wndw.create_line(graph[u0val][0], graph[u0val][1], graph[origPath[w0]][0], graph[origPath[w0]][1])
         break
 
-  print("dPath: {}".format(dPath))
-  testTour(dPath, wg)
-
-def testTour(dPath, wg): #step 3
   if len(dPath) > 0:
-    w = dPath[len(dPath)-1] #w is the node that is encountered twice
-    w = dPath.index(w) #w is now the index of that node
-    r = w + 1
+    print("dPath: {}".format(dPath))
+    testTour(graph, dPath, wg, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge)
+  else:
+    print("No delta path produced")
 
-    sec = dPath[r:len(dPath)-1]
-    path = dPath[:w+1] + sec[::-1] + [dPath[0]] #creates tour that breaks the cycle and returns to start
+def testTour(graph, dPath, wg, u, w, newEdge): #step 4
+  r = w + 1
 
-    cost = 0.0
-    for i in range(0, len(path)-1):
-      cost += wg[path[i]][path[i+1]]
+  sec = dPath[r:len(dPath)-1]
+  tour = dPath[:w+1] + sec[::-1] + [dPath[0]] #creates tour that breaks the cycle and returns to start
 
-    print("new tour: {}, new cost: {}".format(path, cost))
+  cost = 0.0
+  for i in range(0, len(tour)-1):
+    cost += wg[tour[i]][tour[i+1]]
 
+  print("new tour: {}, new cost: {}".format(tour, cost))
 
+  nextDelta(graph, dPath, tour, wg, u, w, newEdge) #performing step 4 on delta path, not the tour
+
+def nextDelta(graph, dPath, tour, wg, u, w, newEdge): #step 4
+  un = -1
+  if u == w + 1: #identify u_i+1
+    un = dPath[len(dPath)-2]
+  elif u == len(dPath)-2:
+    un = w + 1
+  else:
+    print("Cannot ID u_i+1")
+  
+  print("u: {}, w: {}, un: {}\n".format(u, w, un))
+  # unVal = dPath[un]
+  
+  # if [w, un] == newEdge or [un, w] == newEdge:
+  #   print("Go to step 5")
+  # else:
+  #   for wn in range(0, len(dPath)-1):
+  #     wnInd = tour.index(wn)
+  #     unInd = tour.index(un)
+  #     if wnInd == unInd + 1 or wnInd == unInd - 1:
+  #       print("here")
