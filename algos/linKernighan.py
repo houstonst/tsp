@@ -10,21 +10,24 @@ def linKernighan(graph, nameArray, initPath, initCost):
   # initPath = [0,1,2,5,3,4,0] #testing
 
   # TKINTER #
-  root = Tk()
+  startPath = Tk() #GUI for the starting path
   canvas_height = 750
   canvas_width = 1200
-  root.title("Euclidean TSP Solver")
-  root.iconbitmap('./graphics/favicon.ico')
-  wndw = Canvas(root, width = canvas_width, height = canvas_height)
+  startPath.title("Euclidean TSP Solver")
+  startPath.iconbitmap('./graphics/favicon.ico')
+  wndw = Canvas(startPath, width = canvas_width, height = canvas_height)
   wndw.pack(expand = YES, fill=BOTH)
   for pair in graph:
     index = graph.index(pair)
     name = nameArray[index]
     wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
     wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
-  # TKINTER #
 
   lineList = {}
+
+  print("starting path: {}, starting cost: {}".format(initPath, initCost))
+  result = outerLoop(graph, initPath, initCost, wndw, lineList)
+  print("Best Tour: {}, Cost: {}".format(result[0], result[1]))
 
   for i in range(0, len(initPath)-2): #display initPath
     a = initPath[i]
@@ -36,12 +39,36 @@ def linKernighan(graph, nameArray, initPath, initCost):
   line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
   lineList.update({(first, last): line})
 
+  #### Second Window ####
 
-  print("starting path: {}, starting cost: {}".format(initPath, initCost))
-  outerLoop(graph, initPath, initCost, wndw, lineList)
+  endPath = Tk() #GUI for the starting path
+  canvas_height = 750
+  canvas_width = 1200
+  endPath.title("Euclidean TSP Solver")
+  endPath.iconbitmap('./graphics/favicon.ico')
+  wndw = Canvas(endPath, width = canvas_width, height = canvas_height)
+  wndw.pack(expand = YES, fill=BOTH)
+  for pair in graph:
+    index = graph.index(pair)
+    name = nameArray[index]
+    wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
+    wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
+
+  for i in range(0, len(initPath)-2): #display bestTour
+    tour = result[0]
+    a = tour[i]
+    b = tour[i+1]
+    line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+    lineList.update({(a, b): line})
+  first = tour[0]
+  last = tour[len(tour)-2]
+  line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+  lineList.update({(first, last): line})
+  
 
   # TKINTER #
-  root.mainloop()
+  startPath.mainloop()
+  endPath.mainloop()
   # TKINTER #
 
 def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
@@ -88,12 +115,12 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
     sec2 = path[u0:]
     path = sec1[::-1] + sec2[::-1] #reversed so that v's corresponding node is still at the start of the path
 
-  if (u0val, vval) in lineList.keys():
-    wndw.delete(lineList[(u0val, vval)])
-    del lineList[(u0val, vval)]
-  elif (vval, u0val) in lineList.keys():
-    wndw.delete(lineList[(vval, u0val)])
-    del lineList[(vval, u0val)]
+  # if (u0val, vval) in lineList.keys():
+  #   wndw.delete(lineList[(u0val, vval)])
+  #   del lineList[(u0val, vval)]
+  # elif (vval, u0val) in lineList.keys():
+  #   wndw.delete(lineList[(vval, u0val)])
+  #   del lineList[(vval, u0val)]
   
   dPath = []
   for w0 in range(0, len(origPath)-1): #add edge (w0, u0)
@@ -104,8 +131,8 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
         #add edge (w0, u0). Find u0's position then insert w0 immediately before.
         #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
         dPath = path + [origPath[w0]]
-        line = wndw.create_line(graph[u0val][0], graph[u0val][1], graph[origPath[w0]][0], graph[origPath[w0]][1])
-        lineList.update({(newEdge[0], newEdge[1]): line})
+        # line = wndw.create_line(graph[u0val][0], graph[u0val][1], graph[origPath[w0]][0], graph[origPath[w0]][1])
+        # lineList.update({(newEdge[0], newEdge[1]): line})
         break
 
   if len(dPath) > 0:
@@ -146,12 +173,12 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
     dPath = dPath[:w+1] + sec[::-1]
     pass
 
-    if (wVal, unVal) in lineList.keys():
-      wndw.delete(lineList[(wVal, unVal)])
-      del lineList[(wVal, unVal)]
-    elif (unVal, wVal) in lineList.keys():
-      wndw.delete(lineList[(unVal, wVal)])
-      del lineList[(unVal, wVal)]
+    # if (wVal, unVal) in lineList.keys():
+    #   wndw.delete(lineList[(wVal, unVal)])
+    #   del lineList[(wVal, unVal)]
+    # elif (unVal, wVal) in lineList.keys():
+    #   wndw.delete(lineList[(unVal, wVal)])
+    #   del lineList[(unVal, wVal)]
 
     for wn in range(1, len(tour)-1): #evaluate every node, so use tour since dPath has been shortened
       wnVal = tour[wn]
@@ -172,12 +199,10 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
         if dCost <= tourCost:
           edge = [dPath[len(dPath)-2], dPath[len(dPath)-1]]
 
-          line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
-          lineList.update({(edge[0], edge[1]): line})
+          # line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
+          # lineList.update({(edge[0], edge[1]): line})
           testTour(graph, dPath, wg, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
         else:
           pass
 
     return bestTour
-
-  # print("Best Tour: {}, Cost: {}".format(bestTour[0], bestTour[1]))
