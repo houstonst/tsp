@@ -6,7 +6,8 @@ from tsp import *
 bestTour = [[], 0.0]
 
 def linKernighan(graph, nameArray, initPath, initCost):
-  # initPath = [0,1,2,5,3,4,0] #testing shortTest.csv
+  # initPath = [3,2,0,5,4,1,3] #testing shortTest.csv
+  # initPath = [5,3,2,1,4,0,5]
 
   # TKINTER #
   startPath = Tk() #GUI for the starting path
@@ -22,11 +23,12 @@ def linKernighan(graph, nameArray, initPath, initCost):
     wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
     wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
 
-  lineList = {}
-
   # initiate work
   print("Random Tour: {}, Cost: {}".format(initPath, initCost))
+
+  lineList = {}
   result = outerLoop(graph, initPath, initCost, wndw, lineList)
+
   print("Best Tour: {}, Cost: {}".format(result[0], result[1]))
   # initiate work
 

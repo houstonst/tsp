@@ -1,4 +1,4 @@
-import csv
+import csv, re
 from algos.bruteForce import *
 from algos.nearestNeighbor import *
 from algos.farthestInsertion import *
@@ -29,9 +29,9 @@ Enter a CSV file ["example.csv"]:
     csv_reader = csv.reader(infile, delimiter=',')
     for row in infile:
       print(row)
-      rowArray = row.split(",")
-      coords.append([int(rowArray[1]), int(rowArray[2])])
-      cityNames.append(rowArray[0])
+      rowArray = re.split(",\s*", row)
+      coords.append([int(float(rowArray[1])), int(float(rowArray[2]))]) #python cannot convert from string representation
+      cityNames.append(rowArray[0])                                     #of a float to an int. Convert to float first.
     print("---------------------------------------------------------------------------------------------\n\n")
     print("""
 1: Brute Force
