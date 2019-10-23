@@ -3,7 +3,7 @@ from algos.euclidean import *
 from tkinter import *
 from tsp import *
 
-bestTour = [[], 0.0] #tracking the best tour seen. [[Tour], Cost]
+bestTour = [[], 0.0]
 
 def linKernighan(graph, nameArray, initPath, initCost):
 
@@ -37,7 +37,7 @@ def linKernighan(graph, nameArray, initPath, initCost):
   lineList.update({(first, last): line})
 
 
-  print("starting path: {}".format(initPath))
+  print("starting path: {}, starting cost: {}".format(initPath, initCost))
   outerLoop(graph, initPath, initCost, wndw, lineList)
 
   # TKINTER #
@@ -45,6 +45,7 @@ def linKernighan(graph, nameArray, initPath, initCost):
   # TKINTER #
 
 def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
+  global bestTour
   wg = weightedGraph(graph)
   bestTour = [initPath, initCost]
   
@@ -59,10 +60,14 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
       u0 = v-1 #first edge incident with v
       u1 = v+1 #second edge incident with v
 
-    edgeScan(v, u0, graph, initPath, wg, wndw, lineList)
-    edgeScan(v, u1, graph, initPath, wg, wndw, lineList)
+    scan1 = edgeScan(v, u0, graph, initPath, wg, wndw, lineList)
+    scan2 = edgeScan(v, u1, graph, initPath, wg, wndw, lineList)
+
+    print("bestTour: {}".format(max(scan1, scan2)))
+    return max(scan1, scan2)
 
 def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
+  global bestTour
   u0 = u
 
   origPath = path
@@ -104,12 +109,12 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
         break
 
   if len(dPath) > 0:
-    print("dPath: {}".format(dPath))
-    testTour(graph, dPath, wg, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
+    return testTour(graph, dPath, wg, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
   else:
-    print("No delta path produced\n")
+    return bestTour
 
 def testTour(graph, dPath, wg, u, w, newEdge, wndw, lineList): #step 4
+  global bestTour
   r = w + 1
 
   sec = dPath[r:len(dPath)-1]
@@ -119,11 +124,16 @@ def testTour(graph, dPath, wg, u, w, newEdge, wndw, lineList): #step 4
   for i in range(0, len(tour)-1):
     cost += wg[tour[i]][tour[i+1]]
 
-  print("new tour: {}, new cost: {}".format(tour, cost))
+  if cost <= bestTour[1]:
+    bestTour[0] = tour
+    bestTour[1] = cost
+  
+  # print("test tour: {}, cost: {}".format(tour, cost))
 
-  nextDelta(graph, dPath, tour, cost, wg, u, w, newEdge, wndw, lineList) #performing step 4 on delta path, not the tour
+  return nextDelta(graph, dPath, tour, cost, wg, u, w, newEdge, wndw, lineList) #performing step 4 on delta path, not the tour
 
 def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): #step 4
+  global bestTour
   un = w + 1
   wVal = dPath[w]
   unVal = dPath[un]
@@ -134,7 +144,7 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
     #remove (w_i, u_i+1)
     sec = dPath[un:u+1]
     dPath = dPath[:w+1] + sec[::-1]
-    print("after removal: {}".format(dPath))
+    pass
 
     if (wVal, unVal) in lineList.keys():
       wndw.delete(lineList[(wVal, unVal)])
@@ -148,7 +158,7 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
       wnInd = tour.index(wnVal)
       unInd = tour.index(unVal)
       if wnInd == unInd + 1 or wnInd == unInd - 1: #ensures that wn and un are not adjacent in the tour transformation
-        print("adjacent in T")
+        pass
       elif wVal == wnVal:
         continue
       else: #perform (u_i+1, w_i+1) switch; removed (w_i, u_i+1), now add (u_i+1, w_i+1)
@@ -159,15 +169,15 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
         for i in range(0, len(dPath)-1):
           dCost += wg[dPath[i]][dPath[i+1]]
 
-        print("tourCost: {}, dCost: {}".format(tourCost, dCost))
         if dCost <= tourCost:
-          print("u-w switch: {}".format(dPath))
           edge = [dPath[len(dPath)-2], dPath[len(dPath)-1]]
 
           line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
           lineList.update({(edge[0], edge[1]): line})
-          print("here")
           testTour(graph, dPath, wg, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
         else:
-          print("Do not accept. dPath costs greater than T")
-  print("\n")
+          pass
+
+    return bestTour
+
+  # print("Best Tour: {}, Cost: {}".format(bestTour[0], bestTour[1]))
