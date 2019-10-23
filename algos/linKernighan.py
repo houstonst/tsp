@@ -6,8 +6,7 @@ from tsp import *
 bestTour = [[], 0.0]
 
 def linKernighan(graph, nameArray, initPath, initCost):
-
-  # initPath = [0,1,2,5,3,4,0] #testing
+  # initPath = [0,1,2,5,3,4,0] #testing shortTest.csv
 
   # TKINTER #
   startPath = Tk() #GUI for the starting path
@@ -25,9 +24,11 @@ def linKernighan(graph, nameArray, initPath, initCost):
 
   lineList = {}
 
-  print("starting path: {}, starting cost: {}".format(initPath, initCost))
+  # initiate work
+  print("Random Tour: {}, Cost: {}".format(initPath, initCost))
   result = outerLoop(graph, initPath, initCost, wndw, lineList)
   print("Best Tour: {}, Cost: {}".format(result[0], result[1]))
+  # initiate work
 
   for i in range(0, len(initPath)-2): #display initPath
     a = initPath[i]
@@ -65,7 +66,6 @@ def linKernighan(graph, nameArray, initPath, initCost):
   line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
   lineList.update({(first, last): line})
   
-
   # TKINTER #
   startPath.mainloop()
   endPath.mainloop()
@@ -90,13 +90,11 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
     scan1 = edgeScan(v, u0, graph, initPath, wg, wndw, lineList)
     scan2 = edgeScan(v, u1, graph, initPath, wg, wndw, lineList)
 
-    print("bestTour: {}".format(max(scan1, scan2)))
     return max(scan1, scan2)
 
 def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
   global bestTour
   u0 = u
-
   origPath = path
   u0val = path[u0] #make these since they'll be deleted immediatley below
   vval = path[v]
@@ -143,10 +141,9 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
 def testTour(graph, dPath, wg, u, w, newEdge, wndw, lineList): #step 4
   global bestTour
   r = w + 1
-
   sec = dPath[r:len(dPath)-1]
   tour = dPath[:w+1] + sec[::-1] + [dPath[0]] #creates tour that breaks the cycle and returns to start
-
+  
   cost = 0.0
   for i in range(0, len(tour)-1):
     cost += wg[tour[i]][tour[i+1]]
@@ -154,8 +151,6 @@ def testTour(graph, dPath, wg, u, w, newEdge, wndw, lineList): #step 4
   if cost <= bestTour[1]:
     bestTour[0] = tour
     bestTour[1] = cost
-  
-  # print("test tour: {}, cost: {}".format(tour, cost))
 
   return nextDelta(graph, dPath, tour, cost, wg, u, w, newEdge, wndw, lineList) #performing step 4 on delta path, not the tour
 
@@ -189,14 +184,13 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
       elif wVal == wnVal:
         continue
       else: #perform (u_i+1, w_i+1) switch; removed (w_i, u_i+1), now add (u_i+1, w_i+1)
-        #check the costs
         dPath = dPath + [dPath[wn]]
 
         dCost = 0.0
         for i in range(0, len(dPath)-1):
           dCost += wg[dPath[i]][dPath[i+1]]
 
-        if dCost <= tourCost:
+        if dCost <= tourCost: #check the costs
           edge = [dPath[len(dPath)-2], dPath[len(dPath)-1]]
 
           # line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
