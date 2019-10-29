@@ -4,10 +4,14 @@ from tkinter import *
 from tsp import *
 
 bestTour = [[], 0.0]
+deltaSet = set() #must store tuples, not lists
 
 def linKernighan(graph, nameArray, initPath, initCost):
   # initPath = [3,2,0,5,4,1,3] #testing shortTest.csv
   # initPath = [5,3,2,1,4,0,5]
+  # initPath = [0,1,5,3,4,2,0] #exceeds recursion
+
+  # initPath = [0,3,7,5,4,9,8,2,6,1,10,0] #testing longTest.csv
 
   # TKINTER #
   startPath = Tk() #GUI for the starting path
@@ -78,6 +82,8 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
   wg = weightedGraph(graph)
   bestTour = [initPath, initCost]
   
+  scan1 = [[], 9999999]
+  scan2 = [[], 9999999]
   # for v in range(3, 4): #testing
   for v in range(0, len(initPath)-2): #for each node v of G. Do not evaluate last path value since it's the same as path[0]
     u0 = 0 #initialize
@@ -89,13 +95,24 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
       u0 = v-1 #first edge incident with v
       u1 = v+1 #second edge incident with v
 
-    scan1 = edgeScan(v, u0, graph, initPath, wg, wndw, lineList)
-    scan2 = edgeScan(v, u1, graph, initPath, wg, wndw, lineList)
 
-    return max(scan1, scan2)
+    newScan1 = edgeScan(v, u0, graph, initPath, wg, wndw, lineList)
+    newScan2 = edgeScan(v, u1, graph, initPath, wg, wndw, lineList)
+
+    if newScan1[1] < scan1[1]:
+      scan1 = newScan1
+    if newScan2[1] < scan2[1]:
+      scan2 = newScan2
+
+  bestScan = max(scan1[1], scan2[1])
+  if bestScan == scan1[1]:
+    return scan1
+  else:
+    return scan2
+
 
 def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
-  global bestTour
+  global bestTour, deltaSet
   u0 = u
   origPath = path
   u0val = path[u0] #make these since they'll be deleted immediatley below
@@ -131,6 +148,7 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
         #add edge (w0, u0). Find u0's position then insert w0 immediately before.
         #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
         dPath = path + [origPath[w0]]
+        deltaSet.add(tuple(dPath))
         # line = wndw.create_line(graph[u0val][0], graph[u0val][1], graph[origPath[w0]][0], graph[origPath[w0]][1])
         # lineList.update({(newEdge[0], newEdge[1]): line})
         break
@@ -157,18 +175,20 @@ def testTour(graph, dPath, wg, u, w, newEdge, wndw, lineList): #step 4
   return nextDelta(graph, dPath, tour, cost, wg, u, w, newEdge, wndw, lineList) #performing step 4 on delta path, not the tour
 
 def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): #step 4
-  global bestTour
+  global bestTour, deltaSet
   un = w + 1
   wVal = dPath[w]
   unVal = dPath[un]
   
   if [wVal, unVal] == newEdge or [unVal, wVal] == newEdge:
     print("Go to step 5")
+    return bestTour
   else:
     #remove (w_i, u_i+1)
     sec = dPath[un:u+1]
     dPath = dPath[:w+1] + sec[::-1]
-    pass
+
+    if tuple(dPath) not in deltaSet:
 
     # if (wVal, unVal) in lineList.keys():
     #   wndw.delete(lineList[(wVal, unVal)])
@@ -177,28 +197,27 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
     #   wndw.delete(lineList[(unVal, wVal)])
     #   del lineList[(unVal, wVal)]
 
-    for wn in range(1, len(tour)-1): #evaluate every node, so use tour since dPath has been shortened
-      wnVal = tour[wn]
-      wnInd = tour.index(wnVal)
-      unInd = tour.index(unVal)
-      if wnInd == unInd + 1 or wnInd == unInd - 1: #ensures that wn and un are not adjacent in the tour transformation
-        pass
-      elif wVal == wnVal:
-        continue
-      else: #perform (u_i+1, w_i+1) switch; removed (w_i, u_i+1), now add (u_i+1, w_i+1)
-        dPath = dPath + [dPath[wn]]
+      for wn in range(1, len(tour)-1): #evaluate every node, so use tour since dPath has been shortened
+        wnVal = tour[wn]
+        wnInd = tour.index(wnVal)
+        unInd = tour.index(unVal)
+        if wnInd == unInd + 1 or wnInd == unInd - 1: #ensures that wn and un are not adjacent in the tour transformation
+          continue
+        elif wVal == wnVal:
+          continue
+        else: #perform (u_i+1, w_i+1) switch; removed (w_i, u_i+1), now add (u_i+1, w_i+1)
+          dPath = dPath + [dPath[wn]]
+          deltaSet.add(tuple(dPath))
 
-        dCost = 0.0
-        for i in range(0, len(dPath)-1):
-          dCost += wg[dPath[i]][dPath[i+1]]
+          dCost = 0.0
+          for i in range(0, len(dPath)-1):
+            dCost += wg[dPath[i]][dPath[i+1]]
 
-        if dCost <= tourCost: #check the costs
-          edge = [dPath[len(dPath)-2], dPath[len(dPath)-1]]
+          if dCost <= tourCost: #check the costs
+            edge = [dPath[len(dPath)-2], dPath[len(dPath)-1]]
 
-          # line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
-          # lineList.update({(edge[0], edge[1]): line})
-          testTour(graph, dPath, wg, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
-        else:
-          pass
+            # line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
+            # lineList.update({(edge[0], edge[1]): line})
+            testTour(graph, dPath, wg, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
 
     return bestTour
