@@ -21,6 +21,7 @@ def linKernighan(graph, nameArray, initPath, initCost):
   # initPath = [14, 2, 7, 19, 10, 0, 18, 20, 22, 5, 17, 6, 11, 8, 21, 23, 4, 25, 24, 16, 1, 9, 12, 3, 15, 13, 14] #testing massTest.csv. Should be < 11280
   # initPath = [15, 3, 14, 13, 2, 7, 19, 10, 0, 18, 20, 22, 5, 17, 6, 11, 8, 21, 23, 4, 25, 24, 16, 1, 9, 12, 15] #should be < 10711
   # initPath = [15, 25, 10, 8, 20, 17, 21, 0, 18, 23, 5, 12, 6, 24, 3, 16, 14, 4, 9, 19, 22, 1, 7, 13, 11, 2, 15]
+  # initPath = [0, 22, 7, 8, 20, 10, 24, 9, 19, 21, 25, 5, 11, 15, 3, 18, 16, 4, 14, 23, 13, 2, 17, 1, 6, 12, 0] #should not continue further
   "TEST SETS"
 
   # TKINTER #
@@ -46,41 +47,47 @@ def linKernighan(graph, nameArray, initPath, initCost):
   # print("Best Tour: {}, Cost: {}".format(result[0], result[1]))
   # # initiate work
 
-  # #new approach
+  # #newer approach
   # lineList = {}
+  # resultList = []
   # bestTour = [initPath, initCost]
-  # result = bestTour
-  # prevResult = bestTour
+  # resultList += [bestTour]
+  # resultList += [outerLoop(graph, initPath, initCost, wndw, lineList)] #resultList now contains the initial info, then the first run
 
-  # result = outerLoop(graph, prevResult[0], prevResult[1], wndw, lineList)
+  # prevResult = resultList[0] #initialized with initPath and initCost
+  # i = 0
+  # j = 1
 
-  # while result != prevResult:
-  #   print(prevResult)
-  #   prevResult = result
-  #   result = outerLoop(graph, prevResult[0], prevResult[1], wndw, lineList)
-  #   print("prevResult: {}, result: {}".format(prevResult, result))
+  # while resultList[i] != resultList[j]:
+  #   resultList += [outerLoop(graph, resultList[j][0], resultList[j][1], wndw, lineList)]
+  #   i += 1
+  #   j += 1
+  # result = resultList[len(resultList)-1]
+  # #newer approach
 
-  # print("\nBest Tour: {}, Cost: {}".format(result[0], result[1]))
-  # #new approach
-
-  #newer approach
   lineList = {}
-  resultList = []
   bestTour = [initPath, initCost]
-  resultList += [bestTour]
-  resultList += [outerLoop(graph, initPath, initCost, wndw, lineList)] #resultList now contains the initial info, then the first run
+  resultList = [bestTour]
+  resultList += [outerLoop(graph, initPath, initCost, wndw, lineList)]
+  result = bestTour
+  s = 0
+  t = 1
+  #step procedures
+  def stepper():
+    nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList
 
-  prevResult = resultList[0] #initialized with initPath and initCost
-  i = 0
-  j = 1
+    if resultList[s] == resultList[t]:
+      print("complete")
+      return
+    else:
+      resultList += [outerLoop(graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
-  while resultList[i] != resultList[j]:
-    resultList += [outerLoop(graph, resultList[j][0], resultList[j][1], wndw, lineList)]
-    i += 1
-    j += 1
+      s += 1
+      t += 1
+      lineList = {}
+
     print(resultList)
-  result = resultList[len(resultList)-1]
-  #newer approach
+  #step procedures
 
   for i in range(0, len(initPath)-2): #display initPath
     a = initPath[i]
@@ -119,14 +126,21 @@ def linKernighan(graph, nameArray, initPath, initCost):
   lineList.update({(first, last): line})
   
   # TKINTER #
+  stepButton = Button(startPath, text = "Step", command = stepper)
+  stepButton.pack(side = BOTTOM)
+
   startPath.mainloop()
   endPath.mainloop()
   # TKINTER #
 
 def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
-  global bestTour
+  global bestTour, added, addedCost, removed, removedCost
   wg = weightedGraph(graph)
   bestTour = [initPath, initCost]
+  added = set()
+  addedCost = 0.0
+  removed = set()
+  removedCost = 0.0
   
   scan1 = [[], 9999999]
   scan2 = [[], 9999999]
@@ -140,7 +154,6 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
     else:
       u0 = v-1 #first edge incident with v
       u1 = v+1 #second edge incident with v
-
 
     newScan1 = edgeScan(v, u0, graph, initPath, wg, wndw, lineList)
     newScan2 = edgeScan(v, u1, graph, initPath, wg, wndw, lineList)
@@ -200,7 +213,7 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
     # elif (vval, u0val) in lineList.keys():
     #   wndw.delete(lineList[(vval, u0val)])
     #   del lineList[(vval, u0val)]
-    
+
     dPath = []
     for w0 in range(0, len(origPath)-1): #add edge (w0, u0)
       if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
@@ -224,7 +237,7 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
     if len(dPath) > 0:
       return testTour(graph, path, dPath, wg, v, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
     else:
-      return bestTour
+      return bestTour #ISSUE: CONTINUES TO SKIP THE IF STATEMENT AFTER A FEW ITERATIONS
 
 def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 4
   global bestTour
@@ -236,6 +249,7 @@ def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 4
   for i in range(0, len(tour)-1):
     cost += wg[tour[i]][tour[i+1]]
 
+  print("tour: {}, cost: {}".format(tour, cost))
   if cost <= bestTour[1]:
     bestTour[0] = tour
     bestTour[1] = cost
