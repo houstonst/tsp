@@ -5,18 +5,22 @@ from tsp import *
 
 bestTour = [[], 0.0]
 added = set()
+addedCost = 0.0
 removed = set()
+removedCost = 0.0
 
 def linKernighan(graph, nameArray, initPath, initCost):
   "TEST SETS"
   # initPath = [3,2,0,5,4,1,3] #testing shortTest.csv
   # initPath = [5,3,2,1,4,0,5]
-  # initPath = [0,1,5,3,4,2,0] #exceeds recursion
+  # initPath = [0,1,5,3,4,2,0]
 
   # initPath = [0,3,7,5,4,9,8,2,6,1,10,0] #testing longTest.csv
+  # initPath = [3, 10, 4, 6, 7, 0, 2, 8, 1, 5, 9, 3]
 
   # initPath = [14, 2, 7, 19, 10, 0, 18, 20, 22, 5, 17, 6, 11, 8, 21, 23, 4, 25, 24, 16, 1, 9, 12, 3, 15, 13, 14] #testing massTest.csv. Should be < 11280
-  # initPath = [15, 3, 14, 13, 2, 7, 19, 10, 0, 18, 20, 22, 5, 17, 6, 11, 8, 21, 23, 4, 25, 24, 16, 1, 9, 12, 15] #testing massTest.csv. Should be < 10711
+  # initPath = [15, 3, 14, 13, 2, 7, 19, 10, 0, 18, 20, 22, 5, 17, 6, 11, 8, 21, 23, 4, 25, 24, 16, 1, 9, 12, 15] #should be < 10711
+  # initPath = [15, 25, 10, 8, 20, 17, 21, 0, 18, 23, 5, 12, 6, 24, 3, 16, 14, 4, 9, 19, 22, 1, 7, 13, 11, 2, 15]
   "TEST SETS"
 
   # TKINTER #
@@ -67,7 +71,7 @@ def linKernighan(graph, nameArray, initPath, initCost):
     wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
     wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
 
-  for i in range(0, len(initPath)-2): #display bestTour
+  for i in range(0, len(bestTour[0])-2): #display bestTour
     tour = result[0]
     a = tour[i]
     b = tour[i+1]
@@ -118,7 +122,7 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
 
 
 def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
-  global bestTour, added, removed
+  global bestTour, added, removed, addedCost, removedCost
   u0 = u
   origPath = path
   u0val = path[u0] #make these since they'll be deleted immediately below
@@ -131,23 +135,28 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
     return bestTour
   #set checks
   else:
+    rmCost = wg[u0val][vval]
     if u0 == len(path)-2 and v == 0:
       path = path[:len(path)-1]
       removed.add((u0val, vval))
+      removedCost += rmCost
     elif u0 == len(path)-2 and v == len(path)-3:
       sec = path[:u0]
       path = sec[::-1] + [path[u0]]
       removed.add((vval, u0val))
+      removedCost += rmCost
     elif u0 < v: #delete edge (u0, v)
       sec1 = path[1:v]
       sec2 = path[v:]
       path = sec2 + sec1
       removed.add((u0val, vval))
+      removedCost += rmCost
     else:
       sec1 = path[1:u0]
       sec2 = path[u0:]
       path = sec1[::-1] + sec2[::-1] #reversed so that v's corresponding node is still at the start of the path
       removed.add((vval, u0val))
+      removedCost += rmCost
 
     # if (u0val, vval) in lineList.keys():
     #   wndw.delete(lineList[(u0val, vval)])
@@ -161,10 +170,13 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
       if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
         if wg[origPath[w0]][u0val] <= wg[vval][u0val]: #if cost condition met, add the edge
           newEdge = [origPath[w0], u0val]
-          if (newEdge[0], newEdge[1]) in removed:
+          if (newEdge[0], newEdge[1]) in removed or (newEdge[1], newEdge[0]) in removed or (removedCost - addedCost) < 0:
+            continue
+          elif (newEdge[0], newEdge[1]) in added or (newEdge[1], newEdge[0]) in added:
             continue
           else:
             added.add((origPath[w0], u0val))
+            addedCost += wg[origPath[w0]][u0val]
 
             #add edge (w0, u0). Find u0's position then insert w0 immediately before.
             #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
@@ -174,11 +186,11 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
             break
 
     if len(dPath) > 0:
-      return testTour(graph, dPath, wg, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
+      return testTour(graph, path, dPath, wg, v, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
     else:
       return bestTour
 
-def testTour(graph, dPath, wg, u, w, newEdge, wndw, lineList): #step 4
+def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 4
   global bestTour
   r = w + 1
   sec = dPath[r:len(dPath)-1]
@@ -192,13 +204,14 @@ def testTour(graph, dPath, wg, u, w, newEdge, wndw, lineList): #step 4
     bestTour[0] = tour
     bestTour[1] = cost
 
-  return nextDelta(graph, dPath, tour, cost, wg, u, w, newEdge, wndw, lineList) #performing step 4 on delta path, not the tour
+  return nextDelta(graph, path, dPath, tour, cost, wg, v, u, w, newEdge, wndw, lineList) #performing step 4 on delta path, not the tour
 
-def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): #step 4
-  global bestTour, added, removed
+def nextDelta(graph, path, dPath, tour, tourCost, wg, v, u, w, newEdge, wndw, lineList): #step 4
+  global bestTour, added, removed, addedCost, removedCost
   un = w + 1
   wVal = dPath[w]
   unVal = dPath[un]
+  vval = path[v]
   
   if [wVal, unVal] == newEdge or [unVal, wVal] == newEdge:
     return bestTour
@@ -216,6 +229,7 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
       sec = dPath[un:u+1]
       dPath = dPath[:w+1] + sec[::-1]
       removed.add((wVal, unVal))
+      removedCost += wg[wVal][unVal]
 
       # if (wVal, unVal) in lineList.keys():
       #   wndw.delete(lineList[(wVal, unVal)])
@@ -228,24 +242,23 @@ def nextDelta(graph, dPath, tour, tourCost, wg, u, w, newEdge, wndw, lineList): 
         wnVal = tour[wn]
         wnInd = tour.index(wnVal)
         unInd = tour.index(unVal)
-        edge = [dPath[len(dPath)-1], dPath[wn]]
         if wnInd == unInd + 1 or wnInd == unInd - 1: #ensures that wn and un are not adjacent in the tour transformation
           continue
-        elif wVal == wnVal:
+        elif wVal == wnVal or wnVal == vval or dPath[len(dPath)-1] == wnVal or (removedCost - addedCost) < 0:
           continue
-        elif (edge[0], edge[1]) in removed:
+        elif (dPath[len(dPath)-1], wnVal) in removed or (dPath[len(dPath)-1], wnVal) in added:
+          continue
+        elif (wnVal, dPath[len(dPath)-1]) in removed  or (wnVal, dPath[len(dPath)-1]) in added:
           continue
         else: #perform (u_i+1, w_i+1) switch; removed (w_i, u_i+1), now add (u_i+1, w_i+1)
           dPath = dPath + [dPath[wn]]
+          edge = [dPath[len(dPath)-2], dPath[wn]]
           added.add((edge[0], edge[1]))
+          addedCost += wg[edge[0]][edge[1]]
 
-          dCost = 0.0
-          for i in range(0, len(dPath)-1):
-            dCost += wg[dPath[i]][dPath[i+1]]
+          # line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
+          # lineList.update({(edge[0], edge[1]): line})
 
-          if dCost <= tourCost: #check the costs
-            # line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
-            # lineList.update({(edge[0], edge[1]): line})
-            testTour(graph, dPath, wg, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
+          testTour(graph, path, dPath, wg, v, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
 
     return bestTour
