@@ -1,7 +1,7 @@
 import csv, re
 from tsp import *
 
-def reader(file):
+def reader(file, height, width):
   cityNames = []
   coords = []
 
@@ -12,7 +12,7 @@ def reader(file):
       coords.append([int(float(rowArray[1])), int(float(rowArray[2]))]) #python cannot convert from string representation
       cityNames.append(rowArray[0])                                     #of a float to an int. Convert to float first.
   
-  coords = fitter(coords, 750, 1200)
+  coords = fitter(coords, height, width)
   return cityNames, coords
 
 
@@ -38,5 +38,3 @@ def fitter(coords, height, width): #force coordinates to fit GUI window size
     coord[1] = coord[1]*heightMult
   
   return coords
-
-  

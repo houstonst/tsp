@@ -20,11 +20,11 @@ def step(graph, path, cost, iterations, i, wndw):
   path = operator.iadd([next], path)
   return (path, cost, iterations)
 
-def nearestNeighbor(graph, nameArray):
+def nearestNeighbor(graph, nameArray, height, width):
   # TKINTER #
   root = Tk()
-  canvas_height = 750
-  canvas_width = 1200
+  canvas_height = height
+  canvas_width = width
   root.title("Euclidean TSP Solver")
   root.iconbitmap('./graphics/favicon.ico')
   w = Canvas(root, width = canvas_width, height = canvas_height)

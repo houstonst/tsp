@@ -10,6 +10,9 @@ from algos.linKernighan import *
 from tkinter import *
 
 def main():
+  height = 800
+  width = 1600
+
   print("""
 EUCLIDEAN TSP SOLVER:
 
@@ -24,7 +27,7 @@ Enter a CSV file ["example.csv"]:
   inp = "./tests/" + input()
   file = inp
   print("---------------------------------------------------------------------------------------------\n\n")
-  cityNames, coords = reader(file)
+  cityNames, coords = reader(file, height, width)
   print("---------------------------------------------------------------------------------------------\n\n")
   print("""
 1: Brute Force
@@ -45,17 +48,17 @@ Enter an algorithm by its number:
 
   if algo in algoPicks:
     if algo == "1":
-      bruteForce(coords, cityNames) #path is the same as the path variable in the algorithm's file
+      bruteForce(coords, cityNames, height, width) #path is the same as the path variable in the algorithm's file
     elif algo == "2":
-      nearestNeighbor(coords, cityNames)
+      nearestNeighbor(coords, cityNames, height, width)
     elif algo == "3":
-      farthestInsertion(coords, cityNames)
+      farthestInsertion(coords, cityNames, height, width)
     elif algo == "4":
       randPath, randCost = randomTour(coords, cityNames)
-      twoOpt(coords, cityNames, randPath, randCost)
+      twoOpt(coords, cityNames, randPath, randCost, height, width)
     elif algo == "5":
       randPath, randCost = randomTour(coords, cityNames)
-      threeOpt(coords, cityNames, randPath, randCost)
+      threeOpt(coords, cityNames, randPath, randCost, height, width)
     elif algo == "6":
       print("""
 1: Random Tour
@@ -72,10 +75,10 @@ Enter the initial tour constructor by its number:
       if constructor in constPicks:
         if constructor == "1":
           initPath, initCost = randomTour(coords, cityNames)
-          linKernighan(coords, cityNames, initPath, initCost)
+          linKernighan(coords, cityNames, initPath, initCost, height, width)
         elif constructor == "2":
           initPath, initCost = farthestInsertion_NG(coords, cityNames)
-          linKernighan(coords, cityNames, initPath, initCost)
+          linKernighan(coords, cityNames, initPath, initCost, height, width)
       else:
         print("Exiting. Must enter a constructor number given by the list above")
   else:

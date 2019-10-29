@@ -214,5 +214,5 @@ def step(wg, path, cost, unchanged, i, j, k, lineList, wndw, graph):
 
         costCopy = costCopy - oCost + cost7
 
-def threeOpt(graph, nameArray, path, cost):
+def threeOpt(graph, nameArray, path, cost, height, width):
   return

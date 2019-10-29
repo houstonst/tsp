@@ -9,7 +9,7 @@ addedCost = 0.0
 removed = set()
 removedCost = 0.0
 
-def linKernighan(graph, nameArray, initPath, initCost):
+def linKernighan(graph, nameArray, initPath, initCost, height, width):
   "TEST SETS"
   # initPath = [3,2,0,5,4,1,3] #testing shortTest.csv
   # initPath = [5,3,2,1,4,0,5]
@@ -26,8 +26,8 @@ def linKernighan(graph, nameArray, initPath, initCost):
 
   # TKINTER #
   startPath = Tk() #GUI for the starting path
-  canvas_height = 750
-  canvas_width = 1200
+  canvas_height = height
+  canvas_width = width
   startPath.title("INITIAL TOUR")
   startPath.iconbitmap('./graphics/favicon.ico')
   wndw = Canvas(startPath, width = canvas_width, height = canvas_height)
@@ -106,8 +106,8 @@ def linKernighan(graph, nameArray, initPath, initCost):
 
   # SECOND WINDOW #
   endPath = Tk() #GUI for the starting path
-  canvas_height = 750
-  canvas_width = 1200
+  canvas_height = height
+  canvas_width = width
   endPath.title("LIN-KERNIGHAN TOUR")
   endPath.iconbitmap('./graphics/favicon.ico')
   wndw = Canvas(endPath, width = canvas_width, height = canvas_height)
