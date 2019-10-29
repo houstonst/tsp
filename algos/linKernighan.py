@@ -22,6 +22,8 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   # initPath = [15, 3, 14, 13, 2, 7, 19, 10, 0, 18, 20, 22, 5, 17, 6, 11, 8, 21, 23, 4, 25, 24, 16, 1, 9, 12, 15] #should be < 10711
   # initPath = [15, 25, 10, 8, 20, 17, 21, 0, 18, 23, 5, 12, 6, 24, 3, 16, 14, 4, 9, 19, 22, 1, 7, 13, 11, 2, 15]
   # initPath = [0, 22, 7, 8, 20, 10, 24, 9, 19, 21, 25, 5, 11, 15, 3, 18, 16, 4, 14, 23, 13, 2, 17, 1, 6, 12, 0] #should not continue further
+
+  initPath = [40, 25, 44, 23, 21, 9, 6, 38, 12, 18, 15, 45, 49, 48, 36, 32, 19, 17, 16, 4, 1, 3, 41, 39, 8, 2, 11, 51, 47, 24, 30, 20, 27, 42, 22, 26, 13, 28, 7, 37, 5, 10, 14, 46, 35, 29, 33, 50, 34, 43, 31, 0, 40] #8 not in list?
   "TEST SETS"
 
   # TKINTER #
@@ -47,6 +49,7 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   result = bestTour
   s = 0
   t = 1
+  print(bestTour)
 
   def stepper():
     nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList
@@ -218,6 +221,7 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
             dPath = path + [origPath[w0]]
             break
 
+    # if len(dPath) == len(origPath):
     if len(dPath) > 0:
       return testTour(graph, path, dPath, wg, v, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
     else:
@@ -251,16 +255,18 @@ def nextDelta(graph, path, dPath, tour, tourCost, wg, v, u, w, newEdge, wndw, li
 
   else:
     #set checks
-    if (wVal, unVal) in added:
+    if (wVal, unVal) in added or (wVal, unVal) in removed:
       return bestTour
-    elif (unVal, wVal) in added:
+    elif (unVal, wVal) in added or (unVal, wVal) in removed:
       return bestTour
     #set checks
 
-    else:
+    else: # ERROR. CREATING DELTA SETS THAT REVISIT MORE THAN ONE NODE. Likely in the slicing
       #remove (w_i, u_i+1)
+      print("before: {}".format(dPath))
       sec = dPath[un:u+1]
       dPath = dPath[:w+1] + sec[::-1]
+      print("after: {}".format(dPath))
       removed.add((wVal, unVal))
       removedCost += wg[wVal][unVal]
 
