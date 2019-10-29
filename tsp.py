@@ -1,3 +1,4 @@
+from win32.win32api import GetSystemMetrics
 from algos.reader import *
 from algos.bruteForce import *
 from algos.nearestNeighbor import *
@@ -10,8 +11,8 @@ from algos.linKernighan import *
 from tkinter import *
 
 def main():
-  height = 800
-  width = 1600
+  height = GetSystemMetrics(1) - 200
+  width = GetSystemMetrics(0) - 200
 
   print("""
 EUCLIDEAN TSP SOLVER:
