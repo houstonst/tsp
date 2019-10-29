@@ -160,5 +160,4 @@ def farthestInsertion(graph, nameArray):
   root.mainloop()
   # TKINTER #
 
-  print(path)
   return path
