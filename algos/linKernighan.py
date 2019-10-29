@@ -77,16 +77,30 @@ def linKernighan(graph, nameArray, initPath, initCost):
     nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList
 
     if resultList[s] == resultList[t]:
-      print("complete")
+      print("Initial Tour: {}, Initial Cost: {}".format(initPath, initCost))
+      print("Lin-Kernighan Result: {}, Cost: {}".format(resultList[len(resultList)-1][0], resultList[len(resultList)-1][1]))
       return
     else:
       resultList += [outerLoop(graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
-      s += 1
-      t += 1
+      for key in lineList.keys(): #clean up window before populating
+        wndw.delete(lineList[key])
+      
       lineList = {}
 
-    print(resultList)
+      for i in range(0, len(bestTour[0])-2): #display bestTour
+        tour = resultList[len(resultList)-1][0]
+        a = tour[i]
+        b = tour[i+1]
+        line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+        lineList.update({(a, b): line})
+      first = tour[0]
+      last = tour[len(tour)-2]
+      line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+      lineList.update({(first, last): line})
+
+      s += 1
+      t += 1
   #step procedures
 
   for i in range(0, len(initPath)-2): #display initPath
@@ -113,20 +127,9 @@ def linKernighan(graph, nameArray, initPath, initCost):
     name = nameArray[index]
     wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
     wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
-
-  for i in range(0, len(bestTour[0])-2): #display bestTour
-    tour = result[0]
-    a = tour[i]
-    b = tour[i+1]
-    line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
-    lineList.update({(a, b): line})
-  first = tour[0]
-  last = tour[len(tour)-2]
-  line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
-  lineList.update({(first, last): line})
   
   # TKINTER #
-  stepButton = Button(startPath, text = "Step", command = stepper)
+  stepButton = Button(endPath, text = "Step", command = stepper)
   stepButton.pack(side = BOTTOM)
 
   startPath.mainloop()
@@ -249,7 +252,6 @@ def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 4
   for i in range(0, len(tour)-1):
     cost += wg[tour[i]][tour[i+1]]
 
-  print("tour: {}, cost: {}".format(tour, cost))
   if cost <= bestTour[1]:
     bestTour[0] = tour
     bestTour[1] = cost
