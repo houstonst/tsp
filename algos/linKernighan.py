@@ -37,34 +37,9 @@ def linKernighan(graph, nameArray, initPath, initCost):
     name = nameArray[index]
     wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
     wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
+  # TKINTER #
 
-  # # initiate work
-  # print("Random Tour: {}, Cost: {}".format(initPath, initCost))
-
-  # lineList = {}
-  # result = outerLoop(graph, initPath, initCost, wndw, lineList)
-
-  # print("Best Tour: {}, Cost: {}".format(result[0], result[1]))
-  # # initiate work
-
-  # #newer approach
-  # lineList = {}
-  # resultList = []
-  # bestTour = [initPath, initCost]
-  # resultList += [bestTour]
-  # resultList += [outerLoop(graph, initPath, initCost, wndw, lineList)] #resultList now contains the initial info, then the first run
-
-  # prevResult = resultList[0] #initialized with initPath and initCost
-  # i = 0
-  # j = 1
-
-  # while resultList[i] != resultList[j]:
-  #   resultList += [outerLoop(graph, resultList[j][0], resultList[j][1], wndw, lineList)]
-  #   i += 1
-  #   j += 1
-  # result = resultList[len(resultList)-1]
-  # #newer approach
-
+  # STEP FUNCTIONALITY #
   lineList = {}
   bestTour = [initPath, initCost]
   resultList = [bestTour]
@@ -72,11 +47,27 @@ def linKernighan(graph, nameArray, initPath, initCost):
   result = bestTour
   s = 0
   t = 1
-  #step procedures
+
   def stepper():
     nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList
 
     if resultList[s] == resultList[t]:
+      for key in lineList.keys(): #clean up window before populating
+        wndw.delete(lineList[key])
+      
+      lineList = {}
+
+      for i in range(0, len(bestTour[0])-2): #display bestTour
+        tour = resultList[len(resultList)-1][0]
+        a = tour[i]
+        b = tour[i+1]
+        line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+        lineList.update({(a, b): line})
+      first = tour[0]
+      last = tour[len(tour)-2]
+      line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+      lineList.update({(first, last): line})
+      
       print("Initial Tour: {}, Initial Cost: {}".format(initPath, initCost))
       print("Lin-Kernighan Result: {}, Cost: {}".format(resultList[len(resultList)-1][0], resultList[len(resultList)-1][1]))
       return
@@ -101,7 +92,7 @@ def linKernighan(graph, nameArray, initPath, initCost):
 
       s += 1
       t += 1
-  #step procedures
+  # STEP FUNCTIONALITY #
 
   for i in range(0, len(initPath)-2): #display initPath
     a = initPath[i]
@@ -113,8 +104,7 @@ def linKernighan(graph, nameArray, initPath, initCost):
   line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
   lineList.update({(first, last): line})
 
-  #### Second Window ####
-
+  # SECOND WINDOW #
   endPath = Tk() #GUI for the starting path
   canvas_height = 750
   canvas_width = 1200
@@ -127,7 +117,8 @@ def linKernighan(graph, nameArray, initPath, initCost):
     name = nameArray[index]
     wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
     wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
-  
+  # SECOND WINDOW #
+
   # TKINTER #
   stepButton = Button(endPath, text = "Step", command = stepper)
   stepButton.pack(side = BOTTOM)
@@ -147,7 +138,7 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
   
   scan1 = [[], 9999999]
   scan2 = [[], 9999999]
-  # for v in range(3, 4): #testing
+
   for v in range(0, len(initPath)-2): #for each node v of G. Do not evaluate last path value since it's the same as path[0]
     u0 = 0 #initialize
     u1 = 0
@@ -171,7 +162,6 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
     return scan1
   else:
     return scan2
-
 
 def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
   global bestTour, added, removed, addedCost, removedCost
@@ -210,13 +200,6 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
       removed.add((vval, u0val))
       removedCost += rmCost
 
-    # if (u0val, vval) in lineList.keys():
-    #   wndw.delete(lineList[(u0val, vval)])
-    #   del lineList[(u0val, vval)]
-    # elif (vval, u0val) in lineList.keys():
-    #   wndw.delete(lineList[(vval, u0val)])
-    #   del lineList[(vval, u0val)]
-
     dPath = []
     for w0 in range(0, len(origPath)-1): #add edge (w0, u0)
       if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
@@ -233,14 +216,12 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
             #add edge (w0, u0). Find u0's position then insert w0 immediately before.
             #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
             dPath = path + [origPath[w0]]
-            # line = wndw.create_line(graph[u0val][0], graph[u0val][1], graph[origPath[w0]][0], graph[origPath[w0]][1])
-            # lineList.update({(newEdge[0], newEdge[1]): line})
             break
 
     if len(dPath) > 0:
       return testTour(graph, path, dPath, wg, v, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
     else:
-      return bestTour #ISSUE: CONTINUES TO SKIP THE IF STATEMENT AFTER A FEW ITERATIONS
+      return bestTour
 
 def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 4
   global bestTour
@@ -283,13 +264,6 @@ def nextDelta(graph, path, dPath, tour, tourCost, wg, v, u, w, newEdge, wndw, li
       removed.add((wVal, unVal))
       removedCost += wg[wVal][unVal]
 
-      # if (wVal, unVal) in lineList.keys():
-      #   wndw.delete(lineList[(wVal, unVal)])
-      #   del lineList[(wVal, unVal)]
-      # elif (unVal, wVal) in lineList.keys():
-      #   wndw.delete(lineList[(unVal, wVal)])
-      #   del lineList[(unVal, wVal)]
-
       for wn in range(1, len(tour)-1): #evaluate every node, so use tour since dPath has been shortened
         wnVal = tour[wn]
         wnInd = tour.index(wnVal)
@@ -307,9 +281,6 @@ def nextDelta(graph, path, dPath, tour, tourCost, wg, v, u, w, newEdge, wndw, li
           edge = [dPath[len(dPath)-2], dPath[wn]]
           added.add((edge[0], edge[1]))
           addedCost += wg[edge[0]][edge[1]]
-
-          # line = wndw.create_line(graph[edge[0]][0], graph[edge[0]][1], graph[edge[1]][0], graph[edge[1]][1])
-          # lineList.update({(edge[0], edge[1]): line})
 
           testTour(graph, path, dPath, wg, v, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
 

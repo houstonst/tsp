@@ -14,7 +14,7 @@ def initTour(weightedGraph): #finds initial tour and cost between the two furthe
       c = row.index(maxVal)
   return (maxVal*2, [r, c])
 
-def step(graph, path, lineList, cost, itr, wndw):
+def step(graph, path, cost, itr):
   wg = weightedGraph(graph)
 
   if itr == 1: #handles the very first button press
@@ -23,11 +23,7 @@ def step(graph, path, lineList, cost, itr, wndw):
     fst = iPath[0]
     snd = iPath[1]
     thd = iPath[2]
-    a = wndw.create_line(graph[fst][0], graph[fst][1], graph[snd][0], graph[snd][1])
-    b = wndw.create_line(graph[snd][0], graph[snd][1], graph[thd][0], graph[thd][1])
-    lineList.update({(fst, snd): a})
-    lineList.update({(snd, fst): b})
-    return (iPath, iCost, lineList)
+    return (iPath, iCost)
 
   elif itr < len(graph) + 1: #itr simultaneously represents the path length. Handles all remaining button presses
     #see which node not in the subtour has the greatest minimum distance to a node in the subtour
@@ -76,69 +72,25 @@ def step(graph, path, lineList, cost, itr, wndw):
     if markerOne == markerTwo - 1: #ensures that the edge being deleted is actually represented by the path list
       nodeOne = path[markerOne]
       nodeTwo = path[markerTwo]
-      if deletedEdge in lineList.keys(): #delete replaced edges from the GUI
-        wndw.delete(lineList[deletedEdge])
-        del lineList[deletedEdge] #update the list of GUI line IDs
-      else:
-        wndw.delete(lineList[(deletedEdge[1], deletedEdge[0])]) #delete replaced edges from the GUI
-        del lineList[(deletedEdge[1], deletedEdge[0])] 
-      a = wndw.create_line(graph[nodeOne][0], graph[nodeOne][1], graph[nextNode][0], graph[nextNode][1]) #create the new edges that include the new node
-      b = wndw.create_line(graph[nodeTwo][0], graph[nodeTwo][1], graph[nextNode][0], graph[nextNode][1])
-      lineList.update({(nodeOne, nextNode): a}) #update the list of GUI line IDs
-      lineList.update({(nodeTwo, nextNode): b})
       path.insert(markerOne + 1, nextNode)
-      return (path, cost, lineList)
+      return (path, cost)
     
     elif markerOne == markerTwo + 1:
       nodeTwo = path[markerOne]
       nodeOne = path[markerTwo]
-      if deletedEdge in lineList.keys():
-        wndw.delete(lineList[deletedEdge])
-        del lineList[deletedEdge]
-      else:
-        wndw.delete(lineList[(deletedEdge[1], deletedEdge[0])])
-        del lineList[(deletedEdge[1], deletedEdge[0])]
-      a = wndw.create_line(graph[nodeOne][0], graph[nodeOne][1], graph[nextNode][0], graph[nextNode][1])
-      b = wndw.create_line(graph[nodeTwo][0], graph[nodeTwo][1], graph[nextNode][0], graph[nextNode][1])
-      lineList.update({(nodeOne, nextNode): a})
-      lineList.update({(nodeTwo, nextNode): b})
       path.insert(markerOne, nextNode)
-      return (path, cost, lineList)
+      return (path, cost)
 
     elif path[len(path)-1] == deletedEdge[0] and path[len(path)-2] == deletedEdge[1]:
       nodeOne = path[len(path)-2]
       nodeTwo = path[len(path)-1]
-      if deletedEdge in lineList.keys():
-        wndw.delete(lineList[deletedEdge])
-        del lineList[deletedEdge]
-      else:
-        wndw.delete(lineList[(deletedEdge[1], deletedEdge[0])])
-        del lineList[(deletedEdge[1], deletedEdge[0])]
-      a = wndw.create_line(graph[nodeOne][0], graph[nodeOne][1], graph[nextNode][0], graph[nextNode][1])
-      b = wndw.create_line(graph[nodeTwo][0], graph[nodeTwo][1], graph[nextNode][0], graph[nextNode][1])
-      lineList.update({(nodeOne, nextNode): a})
-      lineList.update({(nodeTwo, nextNode): b})
       path.insert(len(path) - 1, nextNode)
-      return (path, cost, lineList)
+      return (path, cost)
 
     else:
       print("error")
 
-def farthestInsertion(graph, nameArray):
-  # TKINTER #
-  root = Tk()
-  canvas_height = 750
-  canvas_width = 1200
-  root.title("Euclidean TSP Solver")
-  root.iconbitmap('./graphics/favicon.ico')
-  w = Canvas(root, width = canvas_width, height = canvas_height)
-  w.pack(expand = YES, fill=BOTH)
-  for pair in graph:
-    index = graph.index(pair)
-    name = nameArray[index]
-    w.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
-    w.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
-  # TKINTER #
+def farthestInsertion_NG(graph, nameArray):
 
   startTime = time.time()
   path = []
@@ -149,16 +101,10 @@ def farthestInsertion(graph, nameArray):
 
   def stepper(): #callable function for the step button
     nonlocal i, path, lineList, cost, graph
-    if i < len(graph):
-      path, cost, lineList = step(graph, path, lineList, cost, i, w)
+    while i < len(graph):
+      path, cost = step(graph, path, cost, i)
       i += 1
 
-  # TKINTER #
-  stepButton = Button(root, text = "Step", command = stepper)
-  stepButton.pack(side = BOTTOM)
+  stepper()
 
-  root.mainloop()
-  # TKINTER #
-
-  print(path)
-  return path
+  return path, cost

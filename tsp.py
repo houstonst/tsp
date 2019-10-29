@@ -2,6 +2,7 @@ import csv, re
 from algos.bruteForce import *
 from algos.nearestNeighbor import *
 from algos.farthestInsertion import *
+from algos.farthestInsertion_NG import *
 from algos.randomTour import *
 from algos.twoOpt import *
 from algos.threeOpt import *
@@ -64,8 +65,27 @@ Enter an algorithm by its number:
         randPath, randCost = randomTour(coords, cityNames)
         threeOpt(coords, cityNames, randPath, randCost)
       elif algo == "6":
-        initPath, initCost = randomTour(coords, cityNames)
-        linKernighan(coords, cityNames, initPath, initCost)
+        print("""
+1: Random Tour
+2: Farthest Insertion Tour
+
+Enter the initial tour constructor by its number:
+""")
+        constructor = input()
+        constPicks = "12"
+
+        print("\n")
+        print("---------------------------------------------------------------------------------------------\n\n")
+
+        if constructor in constPicks:
+          if constructor == "1":
+            initPath, initCost = randomTour(coords, cityNames)
+            linKernighan(coords, cityNames, initPath, initCost)
+          elif constructor == "2":
+            initPath, initCost = farthestInsertion_NG(coords, cityNames)
+            linKernighan(coords, cityNames, initPath, initCost)
+        else:
+          print("Exiting. Must enter a constructor number given by the list above")
     else:
       print("Exiting. Must enter an algorithm number given by the list above")
 if __name__ == "__main__":
