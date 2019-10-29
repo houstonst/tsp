@@ -37,14 +37,50 @@ def linKernighan(graph, nameArray, initPath, initCost):
     wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
     wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
 
-  # initiate work
-  print("Random Tour: {}, Cost: {}".format(initPath, initCost))
+  # # initiate work
+  # print("Random Tour: {}, Cost: {}".format(initPath, initCost))
 
+  # lineList = {}
+  # result = outerLoop(graph, initPath, initCost, wndw, lineList)
+
+  # print("Best Tour: {}, Cost: {}".format(result[0], result[1]))
+  # # initiate work
+
+  # #new approach
+  # lineList = {}
+  # bestTour = [initPath, initCost]
+  # result = bestTour
+  # prevResult = bestTour
+
+  # result = outerLoop(graph, prevResult[0], prevResult[1], wndw, lineList)
+
+  # while result != prevResult:
+  #   print(prevResult)
+  #   prevResult = result
+  #   result = outerLoop(graph, prevResult[0], prevResult[1], wndw, lineList)
+  #   print("prevResult: {}, result: {}".format(prevResult, result))
+
+  # print("\nBest Tour: {}, Cost: {}".format(result[0], result[1]))
+  # #new approach
+
+  #newer approach
   lineList = {}
-  result = outerLoop(graph, initPath, initCost, wndw, lineList)
+  resultList = []
+  bestTour = [initPath, initCost]
+  resultList += [bestTour]
+  resultList += [outerLoop(graph, initPath, initCost, wndw, lineList)] #resultList now contains the initial info, then the first run
 
-  print("Best Tour: {}, Cost: {}".format(result[0], result[1]))
-  # initiate work
+  prevResult = resultList[0] #initialized with initPath and initCost
+  i = 0
+  j = 1
+
+  while resultList[i] != resultList[j]:
+    resultList += [outerLoop(graph, resultList[j][0], resultList[j][1], wndw, lineList)]
+    i += 1
+    j += 1
+    print(resultList)
+  result = resultList[len(resultList)-1]
+  #newer approach
 
   for i in range(0, len(initPath)-2): #display initPath
     a = initPath[i]
