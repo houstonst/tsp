@@ -23,17 +23,19 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   # initPath = [15, 25, 10, 8, 20, 17, 21, 0, 18, 23, 5, 12, 6, 24, 3, 16, 14, 4, 9, 19, 22, 1, 7, 13, 11, 2, 15]
   # initPath = [0, 22, 7, 8, 20, 10, 24, 9, 19, 21, 25, 5, 11, 15, 3, 18, 16, 4, 14, 23, 13, 2, 17, 1, 6, 12, 0] #should not continue further
 
+  initPath = [5, 23, 1, 25, 22, 3, 12, 11, 13, 9, 26, 10, 27, 7, 8, 24, 14, 20, 21, 2, 6, 0, 16, 17, 4, 28, 18, 15, 19, 5]  #testing bavaria.csv. Should eliminate crosses
+
   # initPath = [40, 25, 44, 23, 21, 9, 6, 38, 12, 18, 15, 45, 49, 48, 36, 32, 19, 17, 16, 4, 1, 3, 41, 39, 8, 2, 11, 51, 47, 24, 30, 20, 27, 42, 22, 26, 13, 28, 7, 37, 5, 10, 14, 46, 35, 29, 33, 50, 34, 43, 31, 0, 40] #immediately returns
-  initPath = [29, 31, 24, 15, 12, 47, 38, 4, 11, 51, 27, 5, 16, 22, 6, 14, 36, 43, 32, 42, 10, 39, 8, 46, 23, 9, 2, 25, 18, 45, 35, 19, 21, 40, 48, 3, 30, 1, 34, 41, 37, 26, 7, 50, 20, 17, 49, 44, 13, 0, 33, 28, 29] #many crosses
+  # initPath = [29, 31, 24, 15, 12, 47, 38, 4, 11, 51, 27, 5, 16, 22, 6, 14, 36, 43, 32, 42, 10, 39, 8, 46, 23, 9, 2, 25, 18, 45, 35, 19, 21, 40, 48, 3, 30, 1, 34, 41, 37, 26, 7, 50, 20, 17, 49, 44, 13, 0, 33, 28, 29] #many crosses
   "TEST SETS"
 
   # TKINTER #
-  startPath = Tk() #GUI for the starting path
+  root = Tk() #GUI for the starting path
   canvas_height = height
   canvas_width = width
-  startPath.title("INITIAL TOUR")
-  startPath.iconbitmap('./graphics/favicon.ico')
-  wndw = Canvas(startPath, width = canvas_width, height = canvas_height)
+  root.title("INITIAL TOUR")
+  root.iconbitmap('./graphics/favicon.ico')
+  wndw = Canvas(root, width = canvas_width, height = canvas_height)
   wndw.pack(expand = YES, fill=BOTH)
   for pair in graph:
     index = graph.index(pair)
@@ -108,27 +110,11 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
   lineList.update({(first, last): line})
 
-  # SECOND WINDOW #
-  endPath = Tk() #GUI for the starting path
-  canvas_height = height
-  canvas_width = width
-  endPath.title("LIN-KERNIGHAN TOUR")
-  endPath.iconbitmap('./graphics/favicon.ico')
-  wndw = Canvas(endPath, width = canvas_width, height = canvas_height)
-  wndw.pack(expand = YES, fill=BOTH)
-  for pair in graph:
-    index = graph.index(pair)
-    name = nameArray[index]
-    wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
-    wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
-  # SECOND WINDOW #
-
   # TKINTER #
-  stepButton = Button(endPath, text = "Step", command = stepper)
+  stepButton = Button(root, text = "Step", command = stepper)
   stepButton.pack(side = BOTTOM)
 
-  startPath.mainloop()
-  endPath.mainloop()
+  root.mainloop()
   # TKINTER #
 
 def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
