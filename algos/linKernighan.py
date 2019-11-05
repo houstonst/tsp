@@ -23,7 +23,8 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   # initPath = [15, 25, 10, 8, 20, 17, 21, 0, 18, 23, 5, 12, 6, 24, 3, 16, 14, 4, 9, 19, 22, 1, 7, 13, 11, 2, 15]
   # initPath = [0, 22, 7, 8, 20, 10, 24, 9, 19, 21, 25, 5, 11, 15, 3, 18, 16, 4, 14, 23, 13, 2, 17, 1, 6, 12, 0] #should not continue further
 
-  initPath = [40, 25, 44, 23, 21, 9, 6, 38, 12, 18, 15, 45, 49, 48, 36, 32, 19, 17, 16, 4, 1, 3, 41, 39, 8, 2, 11, 51, 47, 24, 30, 20, 27, 42, 22, 26, 13, 28, 7, 37, 5, 10, 14, 46, 35, 29, 33, 50, 34, 43, 31, 0, 40] #8 not in list?
+  # initPath = [40, 25, 44, 23, 21, 9, 6, 38, 12, 18, 15, 45, 49, 48, 36, 32, 19, 17, 16, 4, 1, 3, 41, 39, 8, 2, 11, 51, 47, 24, 30, 20, 27, 42, 22, 26, 13, 28, 7, 37, 5, 10, 14, 46, 35, 29, 33, 50, 34, 43, 31, 0, 40] #immediately returns
+  initPath = [29, 31, 24, 15, 12, 47, 38, 4, 11, 51, 27, 5, 16, 22, 6, 14, 36, 43, 32, 42, 10, 39, 8, 46, 23, 9, 2, 25, 18, 45, 35, 19, 21, 40, 48, 3, 30, 1, 34, 41, 37, 26, 7, 50, 20, 17, 49, 44, 13, 0, 33, 28, 29] #many crosses
   "TEST SETS"
 
   # TKINTER #
@@ -138,6 +139,7 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
   addedCost = 0.0
   removed = set()
   removedCost = 0.0
+  ###### DO NOT RESET COSTS?######
   
   scan1 = [[], 9999999]
   scan2 = [[], 9999999]
@@ -160,7 +162,7 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
     if newScan2[1] < scan2[1]:
       scan2 = newScan2
 
-  bestScan = max(scan1[1], scan2[1])
+  bestScan = min(scan1[1], scan2[1])
   if bestScan == scan1[1]:
     return scan1
   else:
@@ -174,9 +176,9 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
   vval = path[v]
 
   #set checks
-  if (u0val, vval) in added:
+  if (u0val, vval) in added or (u0val, vval) in removed:
     return bestTour
-  elif (vval, u0val) in added:
+  elif (vval, u0val) in added or (vval, u0val) in removed:
     return bestTour
   #set checks
   else:
@@ -232,7 +234,7 @@ def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 4
   r = w + 1
   sec = dPath[r:len(dPath)-1]
   tour = dPath[:w+1] + sec[::-1] + [dPath[0]] #creates tour that breaks the cycle and returns to start
-  
+
   cost = 0.0
   for i in range(0, len(tour)-1):
     cost += wg[tour[i]][tour[i+1]]
@@ -263,10 +265,8 @@ def nextDelta(graph, path, dPath, tour, tourCost, wg, v, u, w, newEdge, wndw, li
 
     else: # ERROR. CREATING DELTA SETS THAT REVISIT MORE THAN ONE NODE. Likely in the slicing
       #remove (w_i, u_i+1)
-      print("before: {}".format(dPath))
       sec = dPath[un:u+1]
       dPath = dPath[:w+1] + sec[::-1]
-      print("after: {}".format(dPath))
       removed.add((wVal, unVal))
       removedCost += wg[wVal][unVal]
 
@@ -289,5 +289,6 @@ def nextDelta(graph, path, dPath, tour, tourCost, wg, v, u, w, newEdge, wndw, li
           addedCost += wg[edge[0]][edge[1]]
 
           testTour(graph, path, dPath, wg, v, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
+          break
 
     return bestTour
