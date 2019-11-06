@@ -8,32 +8,21 @@ added = set()
 addedCost = 0.0
 removed = set()
 removedCost = 0.0
+untested = set() #in the form (node, edge)
+
+### BEST COST ISSUE. THE BEST COST IS PREVENTING ANY ADVANCES ###
 
 def linKernighan(graph, nameArray, initPath, initCost, height, width):
+  wg = weightedGraph(graph)
   "TEST SETS"
-  # initPath = [3,2,0,5,4,1,3] #testing shortTest.csv
-  # initPath = [5,3,2,1,4,0,5]
-  # initPath = [0,1,5,3,4,2,0]
-
-  # initPath = [0,3,7,5,4,9,8,2,6,1,10,0] #testing longTest.csv
-  # initPath = [3, 10, 4, 6, 7, 0, 2, 8, 1, 5, 9, 3]
-
-  # initPath = [14, 2, 7, 19, 10, 0, 18, 20, 22, 5, 17, 6, 11, 8, 21, 23, 4, 25, 24, 16, 1, 9, 12, 3, 15, 13, 14] #testing massTest.csv. Should be < 11280
-  # initPath = [15, 3, 14, 13, 2, 7, 19, 10, 0, 18, 20, 22, 5, 17, 6, 11, 8, 21, 23, 4, 25, 24, 16, 1, 9, 12, 15] #should be < 10711
-  # initPath = [15, 25, 10, 8, 20, 17, 21, 0, 18, 23, 5, 12, 6, 24, 3, 16, 14, 4, 9, 19, 22, 1, 7, 13, 11, 2, 15]
-  # initPath = [0, 22, 7, 8, 20, 10, 24, 9, 19, 21, 25, 5, 11, 15, 3, 18, 16, 4, 14, 23, 13, 2, 17, 1, 6, 12, 0] #should not continue further
-
-  initPath = [5, 23, 1, 25, 22, 3, 12, 11, 13, 9, 26, 10, 27, 7, 8, 24, 14, 20, 21, 2, 6, 0, 16, 17, 4, 28, 18, 15, 19, 5]  #testing bavaria.csv. Should eliminate crosses
-
-  # initPath = [40, 25, 44, 23, 21, 9, 6, 38, 12, 18, 15, 45, 49, 48, 36, 32, 19, 17, 16, 4, 1, 3, 41, 39, 8, 2, 11, 51, 47, 24, 30, 20, 27, 42, 22, 26, 13, 28, 7, 37, 5, 10, 14, 46, 35, 29, 33, 50, 34, 43, 31, 0, 40] #immediately returns
-  # initPath = [29, 31, 24, 15, 12, 47, 38, 4, 11, 51, 27, 5, 16, 22, 6, 14, 36, 43, 32, 42, 10, 39, 8, 46, 23, 9, 2, 25, 18, 45, 35, 19, 21, 40, 48, 3, 30, 1, 34, 41, 37, 26, 7, 50, 20, 17, 49, 44, 13, 0, 33, 28, 29] #many crosses
+  
   "TEST SETS"
 
   # TKINTER #
   root = Tk() #GUI for the starting path
   canvas_height = height
   canvas_width = width
-  root.title("INITIAL TOUR")
+  root.title("Euclidean TSP Solver")
   root.iconbitmap('./graphics/favicon.ico')
   wndw = Canvas(root, width = canvas_width, height = canvas_height)
   wndw.pack(expand = YES, fill=BOTH)
@@ -45,6 +34,7 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   # TKINTER #
 
   # STEP FUNCTIONALITY #
+
   lineList = {}
   bestTour = [initPath, initCost]
   resultList = [bestTour]
@@ -57,14 +47,15 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   def stepper():
     nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList
 
-    if resultList[s] == resultList[t]:
+    print("next step\n")
+    if resultList[s] == resultList[t] and len(untested) == 0:
       for key in lineList.keys(): #clean up window before populating
         wndw.delete(lineList[key])
       
       lineList = {}
 
+      tour = resultList[len(resultList)-1][0]
       for i in range(0, len(bestTour[0])-2): #display bestTour
-        tour = resultList[len(resultList)-1][0]
         a = tour[i]
         b = tour[i+1]
         line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
@@ -76,6 +67,7 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
       
       print("Initial Tour: {}, Initial Cost: {}".format(initPath, initCost))
       print("Lin-Kernighan Result: {}, Cost: {}".format(resultList[len(resultList)-1][0], resultList[len(resultList)-1][1]))
+      print(untested)
       return
     else:
       resultList += [outerLoop(graph, resultList[t][0], resultList[t][1], wndw, lineList)]
@@ -118,14 +110,19 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   # TKINTER #
 
 def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
-  global bestTour, added, addedCost, removed, removedCost
+  global bestTour, added, addedCost, removed, removedCost, untested
   wg = weightedGraph(graph)
-  bestTour = [initPath, initCost]
+  bestTour = [initPath, initCost] #FIXES IN PART
   added = set()
   addedCost = 0.0
   removed = set()
   removedCost = 0.0
-  ###### DO NOT RESET COSTS?######
+  untested = set()
+
+  for i in range(0, len(initPath)-2):
+    for j in range(0, len(initPath)-1):
+      if i != j:
+        untested.add((i, j))
   
   scan1 = [[], 9999999]
   scan2 = [[], 9999999]
@@ -155,7 +152,7 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
     return scan2
 
 def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
-  global bestTour, added, removed, addedCost, removedCost
+  global bestTour, added, removed, addedCost, removedCost, untested
   u0 = u
   origPath = path
   u0val = path[u0] #make these since they'll be deleted immediately below
@@ -192,8 +189,17 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
       removedCost += rmCost
 
     dPath = []
+    remaining = []
+
     for w0 in range(0, len(origPath)-1): #add edge (w0, u0)
-      if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
+
+      isUntested = (v, w0) in untested
+
+      if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1 and isUntested: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
+        print("checked edges: {}, {}".format((origPath[w0], u0val), (vval, u0val)))
+        
+        untested.remove((v, w0))
+
         if wg[origPath[w0]][u0val] <= wg[vval][u0val]: #if cost condition met, add the edge
           newEdge = [origPath[w0], u0val]
           if (newEdge[0], newEdge[1]) in removed or (newEdge[1], newEdge[0]) in removed or (removedCost - addedCost) < 0:
@@ -207,15 +213,17 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
             #add edge (w0, u0). Find u0's position then insert w0 immediately before.
             #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
             dPath = path + [origPath[w0]]
+            remaining = [num for num in range(w0+1, len(origPath)-1)]
             break
 
-    # if len(dPath) == len(origPath):
+    # print("remaining: {}, remaining length: {}".format(untested, len(untested)))
+
     if len(dPath) > 0:
       return testTour(graph, path, dPath, wg, v, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
     else:
       return bestTour
 
-def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 4
+def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 3
   global bestTour
   r = w + 1
   sec = dPath[r:len(dPath)-1]
@@ -276,5 +284,5 @@ def nextDelta(graph, path, dPath, tour, tourCost, wg, v, u, w, newEdge, wndw, li
 
           testTour(graph, path, dPath, wg, v, dPath.index(unVal), dPath.index(wnVal), edge, wndw, lineList)
           break
-
+    
     return bestTour
