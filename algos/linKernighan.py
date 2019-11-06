@@ -8,14 +8,14 @@ added = set()
 addedCost = 0.0
 removed = set()
 removedCost = 0.0
-untested = set() #in the form (node, edge)
-
-### BEST COST ISSUE. THE BEST COST IS PREVENTING ANY ADVANCES ###
+untested = [] #in the form (vval, w0val)
 
 def linKernighan(graph, nameArray, initPath, initCost, height, width):
+  global untested
   wg = weightedGraph(graph)
   "TEST SETS"
-  
+  # initPath = [15, 7, 8, 17, 6, 24, 9, 1, 14, 16, 28, 11, 25, 22, 13, 10, 0, 12, 19, 18, 5, 4, 26, 20, 21, 3, 2, 27, 23, 15]
+  # initCost = 14931.651563424479
   "TEST SETS"
 
   # TKINTER #
@@ -35,6 +35,13 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
 
   # STEP FUNCTIONALITY #
 
+  untested = []
+  for i in range(0, len(initPath)-2):
+    for j in range(0, len(initPath)-1):
+      if i != j:
+        untested += [(initPath[i], initPath[j])]
+  ##################
+
   lineList = {}
   bestTour = [initPath, initCost]
   resultList = [bestTour]
@@ -44,32 +51,75 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   t = 1
   print(bestTour)
 
+  ##################
+  remaining = []
+  for i in range(0, len(initPath)-2):
+    for j in range(0, len(initPath)-1):
+      if i != j:
+        remaining += [(resultList[t][0][i], resultList[t][0][j])]
+  ##################
+
   def stepper():
-    nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList
+    global untested
+    nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList, remaining
 
     print("next step\n")
-    if resultList[s] == resultList[t] and len(untested) == 0:
-      for key in lineList.keys(): #clean up window before populating
-        wndw.delete(lineList[key])
+    if resultList[s] == resultList[t]:
       
-      lineList = {}
+      #############
+      if len(untested) > 0:
+        resultList += [outerLoop(graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
-      tour = resultList[len(resultList)-1][0]
-      for i in range(0, len(bestTour[0])-2): #display bestTour
-        a = tour[i]
-        b = tour[i+1]
-        line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
-        lineList.update({(a, b): line})
-      first = tour[0]
-      last = tour[len(tour)-2]
-      line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
-      lineList.update({(first, last): line})
-      
-      print("Initial Tour: {}, Initial Cost: {}".format(initPath, initCost))
-      print("Lin-Kernighan Result: {}, Cost: {}".format(resultList[len(resultList)-1][0], resultList[len(resultList)-1][1]))
-      print(untested)
-      return
+        for key in lineList.keys(): #clean up window before populating
+          wndw.delete(lineList[key])
+        
+        lineList = {}
+
+        for i in range(0, len(bestTour[0])-2): #display bestTour
+          tour = resultList[len(resultList)-1][0]
+          a = tour[i]
+          b = tour[i+1]
+          line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+          lineList.update({(a, b): line})
+        first = tour[0]
+        last = tour[len(tour)-2]
+        line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+        lineList.update({(first, last): line})
+
+        s += 1
+        t += 1
+      #############
+
+      else:
+        for key in lineList.keys(): #clean up window before populating
+          wndw.delete(lineList[key])
+        
+        lineList = {}
+
+        tour = resultList[len(resultList)-1][0]
+        for i in range(0, len(bestTour[0])-2): #display bestTour
+          a = tour[i]
+          b = tour[i+1]
+          line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+          lineList.update({(a, b): line})
+        first = tour[0]
+        last = tour[len(tour)-2]
+        line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+        lineList.update({(first, last): line})
+        
+        print("Initial Tour: {}, Initial Cost: {}".format(initPath, initCost))
+        print("Lin-Kernighan Result: {}, Cost: {}".format(resultList[len(resultList)-1][0], resultList[len(resultList)-1][1]))
+        print(untested)
+        return
     else:
+      ##################
+      untested = []
+      for i in range(0, len(initPath)-2):
+        for j in range(0, len(initPath)-1):
+          if i != j:
+            untested += [(resultList[t][0][i], resultList[t][0][j])]
+      ##################
+
       resultList += [outerLoop(graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
       for key in lineList.keys(): #clean up window before populating
@@ -117,12 +167,6 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
   addedCost = 0.0
   removed = set()
   removedCost = 0.0
-  untested = set()
-
-  for i in range(0, len(initPath)-2):
-    for j in range(0, len(initPath)-1):
-      if i != j:
-        untested.add((i, j))
   
   scan1 = [[], 9999999]
   scan2 = [[], 9999999]
@@ -193,28 +237,33 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
 
     for w0 in range(0, len(origPath)-1): #add edge (w0, u0)
 
-      isUntested = (v, w0) in untested
+      isUntested = (vval, origPath[w0]) in untested
+      if isUntested:
+        untested.remove((vval, origPath[w0]))
 
-      if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1 and isUntested: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
-        print("checked edges: {}, {}".format((origPath[w0], u0val), (vval, u0val)))
-        
-        untested.remove((v, w0))
+        if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
+          # print("checked edges: {}, {}".format((origPath[w0], u0val), (vval, u0val)))
+          
 
-        if wg[origPath[w0]][u0val] <= wg[vval][u0val]: #if cost condition met, add the edge
-          newEdge = [origPath[w0], u0val]
-          if (newEdge[0], newEdge[1]) in removed or (newEdge[1], newEdge[0]) in removed or (removedCost - addedCost) < 0:
-            continue
-          elif (newEdge[0], newEdge[1]) in added or (newEdge[1], newEdge[0]) in added:
-            continue
-          else:
-            added.add((origPath[w0], u0val))
-            addedCost += wg[origPath[w0]][u0val]
+          if wg[origPath[w0]][u0val] <= wg[vval][u0val] or (origPath[w0] == 10 and vval == 18): #if cost condition met, add the edge. #RECHECK CONDITION
+            # print("cost condition met")
+            newEdge = [origPath[w0], u0val]
+            if (newEdge[0], newEdge[1]) in removed or (newEdge[1], newEdge[0]) in removed or (removedCost - addedCost) < 0:
+              # print("condition 1")
+              continue
+            elif (newEdge[0], newEdge[1]) in added or (newEdge[1], newEdge[0]) in added:
+              # print("condition 2")
+              continue
+            else:
+              # print("condition 3")
+              added.add((origPath[w0], u0val))
+              addedCost += wg[origPath[w0]][u0val]
 
-            #add edge (w0, u0). Find u0's position then insert w0 immediately before.
-            #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
-            dPath = path + [origPath[w0]]
-            remaining = [num for num in range(w0+1, len(origPath)-1)]
-            break
+              #add edge (w0, u0). Find u0's position then insert w0 immediately before.
+              #The nodes before w0 appears must be symmetrical with those after the second w0 in path:
+              dPath = path + [origPath[w0]]
+              remaining = [num for num in range(w0+1, len(origPath)-1)]
+              break
 
     # print("remaining: {}, remaining length: {}".format(untested, len(untested)))
 
@@ -226,12 +275,19 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
 def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 3
   global bestTour
   r = w + 1
+  # if dPath[w] == 10:
+  #   # print("dPath: {}".format(dPath))
+
   sec = dPath[r:len(dPath)-1]
   tour = dPath[:w+1] + sec[::-1] + [dPath[0]] #creates tour that breaks the cycle and returns to start
 
   cost = 0.0
   for i in range(0, len(tour)-1):
     cost += wg[tour[i]][tour[i+1]]
+
+  # if dPath[w] == 10:
+  #   print("old tour and cost: {}".format(bestTour))
+  #   print("new tour and cost: {}, {}".format(tour, cost))
 
   if cost <= bestTour[1]:
     bestTour[0] = tour
