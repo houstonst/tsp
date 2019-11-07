@@ -3,8 +3,8 @@ from algos.euclidean import *
 from tkinter import *
 from tsp import *
 
-def step(graph, path, cost, iterations, i, wndw):
-  wg = weightedGraph(graph)
+def step(initCoords, graph, path, cost, iterations, i, wndw):
+  wg = weightedGraph(initCoords)
   min = 999999.9
   next = 0
 
@@ -20,7 +20,7 @@ def step(graph, path, cost, iterations, i, wndw):
   path = operator.iadd([next], path)
   return (path, cost, iterations)
 
-def nearestNeighbor(graph, nameArray, height, width):
+def nearestNeighbor(initCoords, graph, nameArray, height, width):
   # TKINTER #
   root = Tk()
   canvas_height = height
@@ -40,14 +40,16 @@ def nearestNeighbor(graph, nameArray, height, width):
   path = [0]
   cost = 0.0
   iterations = 0
-  wg = weightedGraph(graph)
   i = 1
 
   def stepper(): #callable function for the step button
     nonlocal i, path, cost, iterations, graph
     if i <= len(graph):
-      path, cost, iterations = step(graph, path, cost, iterations, i, w)
+      path, cost, iterations = step(initCoords, graph, path, cost, iterations, i, w)
       i += 1
+    else:
+      print("Nearest Neighbor Tour: {}, Cost: {}".format(path, cost))
+      return
 
   # TKINTER #
   stepButton = Button(root, text = "Step", command = stepper)
@@ -56,4 +58,4 @@ def nearestNeighbor(graph, nameArray, height, width):
   root.mainloop()
   # TKINTER #
   
-  return path
+  # return path

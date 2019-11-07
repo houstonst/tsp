@@ -28,7 +28,7 @@ Enter a CSV file ["example.csv"]:
   inp = "./tests/" + input()
   file = inp
   print("---------------------------------------------------------------------------------------------\n\n")
-  cityNames, coords = reader(file, height, width)
+  cityNames, coords, newCoords = reader(file, height, width)
   print("---------------------------------------------------------------------------------------------\n\n")
   print("""
 1: Brute Force
@@ -51,7 +51,7 @@ Enter an algorithm by its number:
     if algo == "1":
       bruteForce(coords, cityNames, height, width) #path is the same as the path variable in the algorithm's file
     elif algo == "2":
-      nearestNeighbor(coords, cityNames, height, width)
+      nearestNeighbor(coords, newCoords, cityNames, height, width)
     elif algo == "3":
       farthestInsertion(coords, cityNames, height, width)
     elif algo == "4":
