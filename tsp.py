@@ -53,7 +53,7 @@ Enter an algorithm by its number:
     elif algo == "2":
       nearestNeighbor(coords, newCoords, cityNames, height, width)
     elif algo == "3":
-      farthestInsertion(coords, cityNames, height, width)
+      farthestInsertion(coords, newCoords, cityNames, height, width)
     elif algo == "4":
       randPath, randCost = randomTour(coords, cityNames)
       twoOpt(coords, cityNames, randPath, randCost, height, width)

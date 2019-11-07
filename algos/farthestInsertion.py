@@ -14,8 +14,8 @@ def initTour(weightedGraph): #finds initial tour and cost between the two furthe
       c = row.index(maxVal)
   return (maxVal*2, [r, c])
 
-def step(graph, path, lineList, cost, itr, wndw):
-  wg = weightedGraph(graph)
+def step(initCoords, graph, path, lineList, cost, itr, wndw):
+  wg = weightedGraph(initCoords)
 
   if itr == 1: #handles the very first button press
     iCost, iPath = initTour(wg)
@@ -124,7 +124,7 @@ def step(graph, path, lineList, cost, itr, wndw):
     else:
       print("error")
 
-def farthestInsertion(graph, nameArray, height, width):
+def farthestInsertion(initCoords, graph, nameArray, height, width):
   # TKINTER #
   root = Tk()
   canvas_height = height
@@ -144,13 +144,13 @@ def farthestInsertion(graph, nameArray, height, width):
   path = []
   cost = 0.0
   lineList = {}
-  wg = weightedGraph(graph)
+  wg = weightedGraph(initCoords)
   i = 1
 
   def stepper(): #callable function for the step button
     nonlocal i, path, lineList, cost, graph
     if i < len(graph):
-      path, cost, lineList = step(graph, path, lineList, cost, i, w)
+      path, cost, lineList = step(initCoords, graph, path, lineList, cost, i, w)
       i += 1
 
   # TKINTER #
