@@ -18,7 +18,7 @@ def main():
 EUCLIDEAN TSP SOLVER:
 
 Author: Matt Houston
-Last Edited: 29 OCTOBER 2019
+Last Edited: 07 NOVEMBER 2019
 Filename: tsp.py
 Input: CSV file, formatted in: City Name, Longitude, Latitude
 Output: A hamiltonian cycle and complexity data
@@ -36,7 +36,7 @@ Enter a CSV file ["example.csv"]:
 3: Farthest Insertion
 4: Two Opt Interchange
 5: Three Opt Interchange (In Progress)
-6: Lin-Kernighan (In Progress)
+6: Lin-Kernighan
 
 
 Enter an algorithm by its number:
@@ -49,7 +49,7 @@ Enter an algorithm by its number:
 
   if algo in algoPicks:
     if algo == "1":
-      bruteForce(coords, cityNames, height, width) #path is the same as the path variable in the algorithm's file
+      bruteForce(coords, newCoords, cityNames, height, width) #path is the same as the path variable in the algorithm's file
     elif algo == "2":
       nearestNeighbor(coords, newCoords, cityNames, height, width)
     elif algo == "3":

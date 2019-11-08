@@ -3,7 +3,7 @@ from algos.euclidean import *
 from tkinter import *
 from tsp import *
 
-def bruteForce(graph, nameArray, height, width): #return the optimal hamiltonian cycle of a complete graph in O(n!) time
+def bruteForce(initCoords, graph, nameArray, height, width): #return the optimal hamiltonian cycle of a complete graph in O(n!) time
   # TKINTER #
   root = Tk()
   canvas_height = height
@@ -42,7 +42,7 @@ def bruteForce(graph, nameArray, height, width): #return the optimal hamiltonian
             min = branchVal
       return (min, p)
 
-  (cost, path) = minBranch(weightedGraph(graph), [0])
+  (cost, path) = minBranch(weightedGraph(initCoords), [0])
   endTime = time.time() - startTime
   adjCost = cost
   pathString = ""

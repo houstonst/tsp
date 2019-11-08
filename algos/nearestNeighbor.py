@@ -8,10 +8,13 @@ def step(initCoords, graph, path, cost, iterations, i, wndw):
   min = 999999.9
   next = 0
 
-  for node in range(1, len(graph)):
+  for node in range(0, len(graph)):
     iterations += 1
     prev = path[0]
-    if path.count(node) == 0 and wg[prev][node] < min:
+    if path.count(node) == 0 and wg[prev][node] < min and node != path[len(path)-1]:
+      next = node
+      min = wg[prev][node]
+    elif node == path[len(path)-1] and len(path) == len(graph):
       next = node
       min = wg[prev][node]
 
