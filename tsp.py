@@ -56,7 +56,7 @@ Enter an algorithm by its number:
       farthestInsertion(coords, newCoords, cityNames, height, width)
     elif algo == "4":
       randPath, randCost = randomTour(coords, cityNames)
-      twoOpt(coords, cityNames, randPath, randCost, height, width)
+      twoOpt(coords, newCoords, cityNames, randPath, randCost, height, width)
     elif algo == "5":
       randPath, randCost = randomTour(coords, cityNames)
       threeOpt(coords, cityNames, randPath, randCost, height, width)

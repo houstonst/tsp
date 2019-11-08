@@ -41,7 +41,7 @@ def step(wg, path, cost, unchanged, i, j, lineList, wndw, graph):
 
   return pathCopy, costCopy, unchanged, lineList
 
-def twoOpt(graph, nameArray, path, cost, height, width):
+def twoOpt(initCoords, graph, nameArray, path, cost, height, width):
   # TKINTER #
   root = Tk()
   canvas_height = height
@@ -57,7 +57,7 @@ def twoOpt(graph, nameArray, path, cost, height, width):
     w.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
   # TKINTER #
 
-  wg = weightedGraph(graph)
+  wg = weightedGraph(initCoords)
   pathCopy = path
   costCopy = cost
   unchanged = True
