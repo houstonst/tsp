@@ -10,9 +10,9 @@ removed = set()
 removedCost = 0.0
 untested = [] #in the form (vval, w0val)
 
-def linKernighan(graph, nameArray, initPath, initCost, height, width):
+def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width):
   global untested
-  wg = weightedGraph(graph)
+  wg = weightedGraph(initCoords)
 
   # TKINTER #
   root = Tk() #GUI for the starting path
@@ -31,7 +31,7 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
 
   # STEP FUNCTIONALITY #
   untested = []
-  for i in range(0, len(initPath)-2):
+  for i in range(0, len(initPath)-1):
     for j in range(0, len(initPath)-1):
       if i != j:
         untested += [(initPath[i], initPath[j])]
@@ -39,13 +39,13 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   lineList = {}
   bestTour = [initPath, initCost]
   resultList = [bestTour]
-  resultList += [outerLoop(graph, initPath, initCost, wndw, lineList)]
+  resultList += [outerLoop(initCoords, graph, initPath, initCost, wndw, lineList)]
   result = bestTour
   s = 0
   t = 1
 
   remaining = []
-  for i in range(0, len(initPath)-2):
+  for i in range(0, len(initPath)-1):
     for j in range(0, len(initPath)-1):
       if i != j:
         remaining += [(resultList[t][0][i], resultList[t][0][j])]
@@ -56,7 +56,7 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
 
     if resultList[s] == resultList[t]:
       if len(untested) > 0:
-        resultList += [outerLoop(graph, resultList[t][0], resultList[t][1], wndw, lineList)]
+        resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
         for key in lineList.keys(): #clean up window before populating
           wndw.delete(lineList[key])
@@ -99,12 +99,12 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
         return
     else:
       untested = []
-      for i in range(0, len(initPath)-2):
+      for i in range(0, len(initPath)-1):
         for j in range(0, len(initPath)-1):
           if i != j:
             untested += [(resultList[t][0][i], resultList[t][0][j])]
 
-      resultList += [outerLoop(graph, resultList[t][0], resultList[t][1], wndw, lineList)]
+      resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
       for key in lineList.keys(): #clean up window before populating
         wndw.delete(lineList[key])
@@ -142,9 +142,9 @@ def linKernighan(graph, nameArray, initPath, initCost, height, width):
   root.mainloop()
   # TKINTER #
 
-def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
+def outerLoop(initCoords, graph, initPath, initCost, wndw, lineList): #step 1
   global bestTour, added, addedCost, removed, removedCost, untested
-  wg = weightedGraph(graph)
+  wg = weightedGraph(initCoords)
   bestTour = [initPath, initCost] #FIXES IN PART
   added = set()
   addedCost = 0.0
@@ -154,7 +154,7 @@ def outerLoop(graph, initPath, initCost, wndw, lineList): #step 1
   scan1 = [[], 9999999]
   scan2 = [[], 9999999]
 
-  for v in range(0, len(initPath)-2): #for each node v of G. Do not evaluate last path value since it's the same as path[0]
+  for v in range(0, len(initPath)-1): #for each node v of G. Do not evaluate last path value since it's the same as path[0]
     u0 = 0 #initialize
     u1 = 0
     if v == 0: #special case since initPath[0] == initPath[last]
@@ -185,14 +185,18 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
   u0val = path[u0] #make these since they'll be deleted immediately below
   vval = path[v]
 
-  if (u0val, vval) in added or (u0val, vval) in removed:
+  if u0 < v and ((u0val, vval) in added or (u0val, vval) in removed):
     return bestTour
-  elif (vval, u0val) in added or (vval, u0val) in removed:
+  elif u0 > v and ((vval, u0val) in added or (vval, u0val) in removed):
     return bestTour
 
   else:
     rmCost = wg[u0val][vval]
     if u0 == len(path)-2 and v == 0:
+      path = path[:len(path)-1]
+      removed.add((vval, u0val))
+      removedCost += rmCost
+    elif u0 == len(path)-1 and v == len(path)-2:
       path = path[:len(path)-1]
       removed.add((u0val, vval))
       removedCost += rmCost

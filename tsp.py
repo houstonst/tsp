@@ -76,10 +76,10 @@ Enter the initial tour constructor by its number:
       if constructor in constPicks:
         if constructor == "1":
           initPath, initCost = randomTour(coords, cityNames)
-          linKernighan(coords, cityNames, initPath, initCost, height, width)
+          linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width)
         elif constructor == "2":
           initPath, initCost = farthestInsertion_NG(coords, cityNames)
-          linKernighan(coords, cityNames, initPath, initCost, height, width)
+          linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width)
       else:
         print("Exiting. Must enter a constructor number given by the list above")
   else:
