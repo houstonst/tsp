@@ -44,31 +44,74 @@ def fitter(coords, GUIheight, GUIwidth): #force coordinates to fit GUI window si
   arbitraryYstart = minY + GUIheight - 200
   arbitraryXdiff = maxX - arbitraryXstart
   arbitraryYdiff = maxY - arbitraryYstart
-  xMultiplier = (GUIwidth - 200)/(maxX - minX)
-  yMultiplier = (GUIheight - 200)/(maxY - minY)
+  print("x: {}".format(arbitraryXdiff))
+  print("y: {}".format(arbitraryYdiff))
 
   if arbitraryXdiff > 0 and arbitraryXdiff > arbitraryYdiff:
-    shrink = True
+    print("shrink x") #shrink on x
     multiplier = (GUIwidth - 200)/(maxX - minX)
+    print("mult: {}".format(multiplier))
   elif arbitraryXdiff < 0 and arbitraryXdiff > arbitraryYdiff:
-    expand = True
+    print("expand x") #expand on x
     multiplier = (GUIwidth - 200)/(maxX - minX)
   elif arbitraryYdiff > 0 and arbitraryYdiff > arbitraryXdiff:
-    shrink = True
+    print("shrink y") #shrink on y
     multiplier = (GUIheight - 200)/(maxY - minY)
   elif arbitraryYdiff < 0 and arbitraryYdiff > arbitraryXdiff:
-    expand = True
+    print("expand y") #expand on y
     multiplier = (GUIheight - 200)/(maxY - minY)
   else:
     print("none met")
 
   for coord in coords:
-    if shrink == True:
-      coord[0] = coord[0]*multiplier
-      coord[1] = coord[1]*multiplier
-    elif expand == True:
-      coord[0] = coord[0]*multiplier
-      coord[1] = coord[1]*multiplier
+    coord[0] = coord[0]*multiplier
+    coord[1] = coord[1]*multiplier
+
+  #reset the min and max values
+  maxX = 0
+  maxY = 0
+  minX = 999999
+  minY = 999999
+
+  for coord in coords:
+    if coord[0] > maxX:
+      maxX = coord[0]
+    if coord[0] < minX:
+      minX = coord[0]
+    if coord[1] > maxY:
+      maxY = coord[1]
+    if coord[1] < minY:
+      minY = coord[1]
+
+  #rerun expansion/shrinking in case a dimension continues
+  #to expand beyond GUI
+  multiplier = 1
+  arbitraryXstart = minX + GUIwidth - 200
+  arbitraryYstart = minY + GUIheight - 200
+  arbitraryXdiff = maxX - arbitraryXstart
+  arbitraryYdiff = maxY - arbitraryYstart
+  print("x: {}".format(arbitraryXdiff))
+  print("y: {}".format(arbitraryYdiff))
+
+  if arbitraryXdiff > 0 and arbitraryXdiff > arbitraryYdiff:
+    print("shrink x") #shrink on x
+    multiplier = (GUIwidth - 200)/(maxX - minX)
+    print("mult: {}".format(multiplier))
+  elif arbitraryXdiff < 0 and arbitraryXdiff > arbitraryYdiff:
+    print("expand x") #expand on x
+    multiplier = (GUIwidth - 200)/(maxX - minX)
+  elif arbitraryYdiff > 0 and arbitraryYdiff > arbitraryXdiff:
+    print("shrink y") #shrink on y
+    multiplier = (GUIheight - 200)/(maxY - minY)
+  elif arbitraryYdiff < 0 and arbitraryYdiff > arbitraryXdiff:
+    print("expand y") #expand on y
+    multiplier = (GUIheight - 200)/(maxY - minY)
+  else:
+    print("none met")
+
+  for coord in coords:
+    coord[0] = coord[0]*multiplier
+    coord[1] = coord[1]*multiplier
 
   #reset the min and max values
   maxX = 0
