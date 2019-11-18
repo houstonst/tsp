@@ -18,12 +18,12 @@ def main():
 EUCLIDEAN TSP SOLVER:
 
 Author: Matt Houston
-Last Edited: 07 NOVEMBER 2019
+Last Edited: 11 NOVEMBER 2019
 Filename: tsp.py
 Input: CSV file, formatted in: City Name, Longitude, Latitude
 Output: A hamiltonian cycle and complexity data
 
-Enter a CSV file ["example.csv"]: 
+Enter a .csv or .txt file name ["example.csv or example.txt"]: 
 """)
   inp = "./tests/" + input()
   file = inp

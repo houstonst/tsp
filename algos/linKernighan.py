@@ -54,6 +54,8 @@ def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width
     global untested
     nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList, remaining
 
+    print("\n\n")
+    print(untested)
     if resultList[s] == resultList[t]:
       if len(untested) > 0:
         resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]

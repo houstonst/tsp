@@ -7,9 +7,9 @@ def reader(file, height, width):
   newCoords = []
 
   with open(file) as infile:
-    csv_reader = csv.reader(infile, delimiter = ',')
+    # csv_reader = csv.reader(infile, delimiter = ',')
     for row in infile:
-      rowArray = re.split(",\s*", row)
+      rowArray = re.split(",*\s*", row)
       coords.append([int(float(rowArray[1])), int(float(rowArray[2]))])    #python cannot convert from string representation
       newCoords.append([int(float(rowArray[1])), int(float(rowArray[2]))]) #of a float to an int. Convert to float first.
       cityNames.append(rowArray[0])                                     
@@ -44,24 +44,19 @@ def fitter(coords, GUIheight, GUIwidth): #force coordinates to fit GUI window si
   arbitraryYstart = minY + GUIheight - 200
   arbitraryXdiff = maxX - arbitraryXstart
   arbitraryYdiff = maxY - arbitraryYstart
-  print("x: {}".format(arbitraryXdiff))
-  print("y: {}".format(arbitraryYdiff))
 
   if arbitraryXdiff > 0 and arbitraryXdiff > arbitraryYdiff:
-    print("shrink x") #shrink on x
+    #shrink on x
     multiplier = (GUIwidth - 200)/(maxX - minX)
-    print("mult: {}".format(multiplier))
   elif arbitraryXdiff < 0 and arbitraryXdiff > arbitraryYdiff:
-    print("expand x") #expand on x
+    #expand on x
     multiplier = (GUIwidth - 200)/(maxX - minX)
   elif arbitraryYdiff > 0 and arbitraryYdiff > arbitraryXdiff:
-    print("shrink y") #shrink on y
+    #shrink on y
     multiplier = (GUIheight - 200)/(maxY - minY)
   elif arbitraryYdiff < 0 and arbitraryYdiff > arbitraryXdiff:
-    print("expand y") #expand on y
+    #expand on y
     multiplier = (GUIheight - 200)/(maxY - minY)
-  else:
-    print("none met")
 
   for coord in coords:
     coord[0] = coord[0]*multiplier
@@ -90,24 +85,19 @@ def fitter(coords, GUIheight, GUIwidth): #force coordinates to fit GUI window si
   arbitraryYstart = minY + GUIheight - 200
   arbitraryXdiff = maxX - arbitraryXstart
   arbitraryYdiff = maxY - arbitraryYstart
-  print("x: {}".format(arbitraryXdiff))
-  print("y: {}".format(arbitraryYdiff))
 
   if arbitraryXdiff > 0 and arbitraryXdiff > arbitraryYdiff:
-    print("shrink x") #shrink on x
+    #shrink on x
     multiplier = (GUIwidth - 200)/(maxX - minX)
-    print("mult: {}".format(multiplier))
   elif arbitraryXdiff < 0 and arbitraryXdiff > arbitraryYdiff:
-    print("expand x") #expand on x
+    #expand on x
     multiplier = (GUIwidth - 200)/(maxX - minX)
   elif arbitraryYdiff > 0 and arbitraryYdiff > arbitraryXdiff:
-    print("shrink y") #shrink on y
+    #shrink on y
     multiplier = (GUIheight - 200)/(maxY - minY)
   elif arbitraryYdiff < 0 and arbitraryYdiff > arbitraryXdiff:
-    print("expand y") #expand on y
+    #expand on y
     multiplier = (GUIheight - 200)/(maxY - minY)
-  else:
-    print("none met")
 
   for coord in coords:
     coord[0] = coord[0]*multiplier

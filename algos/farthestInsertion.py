@@ -12,6 +12,9 @@ def initTour(weightedGraph): #finds initial tour and cost between the two furthe
       maxVal = max(row)
       r = weightedGraph.index(row)
       c = row.index(maxVal)
+  
+  print(maxVal)
+  print(r, c)
   return (maxVal*2, [r, c])
 
 def step(initCoords, graph, path, lineList, cost, itr, wndw):
@@ -152,6 +155,7 @@ def farthestInsertion(initCoords, graph, nameArray, height, width):
     if i < len(graph):
       path, cost, lineList = step(initCoords, graph, path, lineList, cost, i, w)
       i += 1
+      print(cost)
 
   # TKINTER #
   stepButton = Button(root, text = "Step", command = stepper)
@@ -159,5 +163,5 @@ def farthestInsertion(initCoords, graph, nameArray, height, width):
 
   root.mainloop()
   # TKINTER #
-
+  
   return path
