@@ -41,7 +41,7 @@ def step(wg, path, cost, unchanged, i, j, lineList, wndw, graph):
 
   return pathCopy, costCopy, unchanged, lineList
 
-def twoOpt(initCoords, graph, nameArray, path, cost, height, width):
+def twoOpt(initCoords, graph, nameArray, path, cost, height, width, option):
   # TKINTER #
   root = Tk()
   canvas_height = height

@@ -3,7 +3,7 @@ from algos.euclidean import *
 from tkinter import *
 from tsp import *
 
-def step(initCoords, graph, path, cost, iterations, i, wndw):
+def step(initCoords, graph, path, cost, iterations, i, wndw, option):
   wg = weightedGraph(initCoords)
   min = 999999.9
   next = 0
@@ -19,25 +19,27 @@ def step(initCoords, graph, path, cost, iterations, i, wndw):
       min = wg[prev][node]
 
   cost += min
-  wndw.create_line(graph[next][0], graph[next][1], graph[path[0]][0], graph[path[0]][1])
+  if option == "1":
+    wndw.create_line(graph[next][0], graph[next][1], graph[path[0]][0], graph[path[0]][1])
   path = operator.iadd([next], path)
   return (path, cost, iterations)
 
-def nearestNeighbor(initCoords, graph, nameArray, height, width):
-  # TKINTER #
-  root = Tk()
-  canvas_height = height
-  canvas_width = width
-  root.title("Euclidean TSP Solver")
-  root.iconbitmap('./graphics/favicon.ico')
-  w = Canvas(root, width = canvas_width, height = canvas_height)
-  w.pack(expand = YES, fill=BOTH)
-  for pair in graph:
-    index = graph.index(pair)
-    name = nameArray[index]
-    w.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
-    w.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
-  # TKINTER #
+def nearestNeighbor(initCoords, graph, nameArray, height, width, option):
+  if option == "1":
+    # TKINTER #
+    root = Tk()
+    canvas_height = height
+    canvas_width = width
+    root.title("Euclidean TSP Solver")
+    root.iconbitmap('./graphics/favicon.ico')
+    w = Canvas(root, width = canvas_width, height = canvas_height)
+    w.pack(expand = YES, fill=BOTH)
+    for pair in graph:
+      index = graph.index(pair)
+      name = nameArray[index]
+      w.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
+      w.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
+    # TKINTER #
 
   startTime = time.time()
   path = [0]
@@ -46,19 +48,31 @@ def nearestNeighbor(initCoords, graph, nameArray, height, width):
   i = 1
 
   def stepper(): #callable function for the step button
-    nonlocal i, path, cost, iterations, graph
-    if i <= len(graph):
-      path, cost, iterations = step(initCoords, graph, path, cost, iterations, i, w)
-      i += 1
-    else:
-      print("Nearest Neighbor Tour: {}, Cost: {}".format(path, cost))
+    nonlocal i, path, cost, iterations, graph, w
+    if option == "1":
+      if i <= len(graph):
+        path, cost, iterations = step(initCoords, graph, path, cost, iterations, i, w, option)
+        i += 1
+      else:
+        print("Nearest Neighbor Tour: {}, Cost: {}".format(path, cost))
+        return
+    elif option == "2":
+      while i <= len(graph):
+        w = 0
+        path, cost, iterations = step(initCoords, graph, path, cost, iterations, i, w, option)
+        i += 1
+      
+      runTime = time.time() - startTime
+      print("Nearest Neighbor Tour: {}, Cost: {}, Running Time: {}".format(path, cost, runTime))
       return
+      
+  if option == "1":
+    # TKINTER #
+    stepButton = Button(root, text = "Step", command = stepper)
+    stepButton.pack(side = BOTTOM)
 
-  # TKINTER #
-  stepButton = Button(root, text = "Step", command = stepper)
-  stepButton.pack(side = BOTTOM)
-
-  root.mainloop()
-  # TKINTER #
+    root.mainloop()
+    # TKINTER #
   
-  # return path
+  else:
+    stepper()

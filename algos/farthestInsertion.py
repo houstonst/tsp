@@ -130,9 +130,6 @@ def step(initCoords, graph, path, lineList, cost, itr, wndw, option):
       print("error")
 
 def farthestInsertion(initCoords, graph, nameArray, height, width, option):
-  startTime = time.time()
-  option = str(option)
-
   if option == "1":
     # TKINTER #
     root = Tk()
@@ -149,7 +146,7 @@ def farthestInsertion(initCoords, graph, nameArray, height, width, option):
       w.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
     # TKINTER #
 
-  endTime = 0.0
+  startTime = time.time()
   path = []
   cost = 0.0
   lineList = {}
@@ -170,8 +167,8 @@ def farthestInsertion(initCoords, graph, nameArray, height, width, option):
         path, cost, lineList = step(initCoords, graph, path, lineList, cost, i, w, option)
         i += 1 
 
-      endTime = time.time() - startTime
-      print(endTime)
+      runtime = time.time() - startTime
+      print("Running time: {}".format(runtime))
 
   if option == "1":
     # TKINTER #

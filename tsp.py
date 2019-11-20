@@ -3,7 +3,6 @@ from algos.reader import *
 from algos.bruteForce import *
 from algos.nearestNeighbor import *
 from algos.farthestInsertion import *
-from algos.farthestInsertion_NG import *
 from algos.randomTour import *
 from algos.twoOpt import *
 from algos.threeOpt import *
@@ -51,7 +50,16 @@ Enter an algorithm by its number:
     if algo == "1":
       bruteForce(coords, newCoords, cityNames, height, width) #path is the same as the path variable in the algorithm's file
     elif algo == "2":
-      nearestNeighbor(coords, newCoords, cityNames, height, width)
+      print("\n")
+      print("---------------------------------------------------------------------------------------------\n\n")
+      print("""
+1: Run Graphics
+2: Run Without Graphics
+
+Enter whether or not to run with GUI
+""")
+      option = input()
+      nearestNeighbor(coords, newCoords, cityNames, height, width, option)
     elif algo == "3":
       print("\n")
       print("---------------------------------------------------------------------------------------------\n\n")
@@ -64,8 +72,17 @@ Enter whether or not to run with GUI
       option = input()
       farthestInsertion(coords, newCoords, cityNames, height, width, option)
     elif algo == "4":
+      print("\n")
+      print("---------------------------------------------------------------------------------------------\n\n")
+      print("""
+1: Run Graphics
+2: Run Without Graphics
+
+Enter whether or not to run with GUI
+""")
+      option = input()
       randPath, randCost = randomTour(coords, cityNames)
-      twoOpt(coords, newCoords, cityNames, randPath, randCost, height, width)
+      twoOpt(coords, newCoords, cityNames, randPath, randCost, height, width, option)
     elif algo == "5":
       randPath, randCost = randomTour(coords, cityNames)
       threeOpt(coords, cityNames, randPath, randCost, height, width)
