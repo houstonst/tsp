@@ -18,9 +18,9 @@ def main():
 EUCLIDEAN TSP SOLVER:
 
 Author: Matt Houston
-Last Edited: 11 NOVEMBER 2019
+Last Edited: 18 NOVEMBER 2019
 Filename: tsp.py
-Input: CSV file, formatted in: City Name, Longitude, Latitude
+Input: .csv or .txt file, formatted in: City Name, Longitude, Latitude
 Output: A hamiltonian cycle and complexity data
 
 Enter a .csv or .txt file name ["example.csv or example.txt"]: 
@@ -53,7 +53,16 @@ Enter an algorithm by its number:
     elif algo == "2":
       nearestNeighbor(coords, newCoords, cityNames, height, width)
     elif algo == "3":
-      farthestInsertion(coords, newCoords, cityNames, height, width)
+      print("\n")
+      print("---------------------------------------------------------------------------------------------\n\n")
+      print("""
+1: Run Graphics
+2: Run Without Graphics
+
+Enter whether or not to run with GUI
+""")
+      option = input()
+      farthestInsertion(coords, newCoords, cityNames, height, width, option)
     elif algo == "4":
       randPath, randCost = randomTour(coords, cityNames)
       twoOpt(coords, newCoords, cityNames, randPath, randCost, height, width)
@@ -78,7 +87,7 @@ Enter the initial tour constructor by its number:
           initPath, initCost = randomTour(coords, cityNames)
           linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width)
         elif constructor == "2":
-          initPath, initCost = farthestInsertion_NG(coords, cityNames)
+          initPath, initCost = farthestInsertion(coords, newCoords, cityNames, height, width, "2")
           linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width)
       else:
         print("Exiting. Must enter a constructor number given by the list above")

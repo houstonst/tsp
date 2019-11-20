@@ -11,8 +11,17 @@ removedCost = 0.0
 untested = [] #in the form (vval, w0val)
 
 def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width):
-  global untested
   wg = weightedGraph(initCoords)
+  # initPath = [36, 30, 43, 17, 27, 19, 37, 6, 28, 7, 44, 46, 33, 20, 47, 21, 13, 14, 25, 39, 32, 0, 5, 42, 24, 10, 45, 35, 4, 26, 2, 29, 34, 41, 16, 22, 3, 23, 11, 12, 15, 40, 1, 8, 9, 38, 31, 18, 36]
+  # z = 0
+  # for i in range(0, len(initPath)-1):
+  #   z += wg[initPath[i]][initPath[i+1]]
+
+  # initCost = z
+
+  print(initPath, initCost)
+  global untested
+  
 
   # TKINTER #
   root = Tk() #GUI for the starting path
@@ -54,9 +63,13 @@ def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width
     global untested
     nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList, remaining
 
-    print("\n\n")
-    print(untested)
-    if resultList[s] == resultList[t]:
+    # print("\n\n")
+    # print(untested)
+    # print(resultList[s])
+    # print(resultList[t])
+    midSection = resultList[t][0][1:len(resultList[t][0])-1]
+    revSection = midSection[::-1]
+    if resultList[s] == resultList[t] or resultList[s][0][1:len(resultList[s][0])-1] == revSection:
       if len(untested) > 0:
         resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
@@ -145,6 +158,9 @@ def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width
   # TKINTER #
 
 def outerLoop(initCoords, graph, initPath, initCost, wndw, lineList): #step 1
+
+  # print("\n")
+  # print(initPath, initCost)
   global bestTour, added, addedCost, removed, removedCost, untested
   wg = weightedGraph(initCoords)
   bestTour = [initPath, initCost] #FIXES IN PART
@@ -174,18 +190,21 @@ def outerLoop(initCoords, graph, initPath, initCost, wndw, lineList): #step 1
     if newScan2[1] < scan2[1]:
       scan2 = newScan2
 
-  bestScan = min(scan1[1], scan2[1])
-  if bestScan == scan1[1]:
+  if scan1[1] == scan2[1]:
+    return random.choice([scan1, scan2])
+  elif scan1[1] < scan2[1]:
     return scan1
   else:
     return scan2
 
 def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
+
   global bestTour, added, removed, addedCost, removedCost, untested
   u0 = u
   origPath = path
   u0val = path[u0] #make these since they'll be deleted immediately below
   vval = path[v]
+
 
   if u0 < v and ((u0val, vval) in added or (u0val, vval) in removed):
     return bestTour
@@ -200,7 +219,7 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
       removedCost += rmCost
     elif u0 == len(path)-1 and v == len(path)-2:
       path = path[:len(path)-1]
-      removed.add((u0val, vval))
+      removed.add((vval, u0val))
       removedCost += rmCost
     elif u0 == len(path)-2 and v == len(path)-3:
       sec = path[:u0]
@@ -228,7 +247,7 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
       if isUntested:
         untested.remove((vval, origPath[w0]))
         if w0 != v and w0 != u0 and w0 != u0+1 and w0 != u0-1: #new edge cannot be self-directed, back to v, or to a node that's already adjacent
-          if wg[origPath[w0]][u0val] <= wg[vval][u0val] or (origPath[w0] == 10 and vval == 18): #if cost condition met, add the edge
+          if wg[origPath[w0]][u0val] <= wg[vval][u0val]: #if cost condition met, add the edge
             newEdge = [origPath[w0], u0val]
             if (newEdge[0], newEdge[1]) in removed or (newEdge[1], newEdge[0]) in removed or (removedCost - addedCost) < 0:
               continue
@@ -245,7 +264,7 @@ def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
               break
 
     if len(dPath) > 0:
-      return testTour(graph, path, dPath, wg, v, dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
+      return testTour(graph, path, dPath, wg, dPath.index(vval), dPath.index(u0val), dPath.index(dPath[len(dPath)-1]), newEdge, wndw, lineList)
     else:
       return bestTour
 
@@ -258,6 +277,11 @@ def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 3
   cost = 0.0
   for i in range(0, len(tour)-1):
     cost += wg[tour[i]][tour[i+1]]
+
+  if dPath[w] in [31, 18, 44, 46]: #should be printing met
+    if dPath[u] in [31, 18, 44, 46]:
+      if dPath[v] in [31, 18, 44, 46]:
+        print(cost)
 
   if cost <= bestTour[1]:
     bestTour[0] = tour
