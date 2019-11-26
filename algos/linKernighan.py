@@ -12,14 +12,17 @@ untested = [] #in the form (vval, w0val)
 
 def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width):
   wg = weightedGraph(initCoords)
-  # initPath = [36, 30, 43, 17, 27, 19, 37, 6, 28, 7, 44, 46, 33, 20, 47, 21, 13, 14, 25, 39, 32, 0, 5, 42, 24, 10, 45, 35, 4, 26, 2, 29, 34, 41, 16, 22, 3, 23, 11, 12, 15, 40, 1, 8, 9, 38, 31, 18, 36]
-  # z = 0
+
+  # initPath = [18, 2, 41, 25, 12, 35, 15, 20, 17, 37, 31, 40, 39, 28, 27, 8, 32, 4, 3, 38, 26, 13, 43, 11, 42, 16, 19, 36, 6, 33, 47, 45, 46, 44, 34, 23, 24, 30, 1, 7, 29, 0, 5, 9, 22, 10, 21, 14, 18]
+  # initPath = [3, 11, 23, 14, 25, 32, 24, 42, 10, 45, 35, 4, 26, 2, 29, 5, 0, 39, 21, 13, 47, 20, 30, 43, 17, 27, 19, 37, 6, 36, 28, 7, 18, 44, 31, 38, 9, 40, 15, 12, 33, 46, 8, 1, 22, 16, 41, 34, 3]
+  
+  # initCost = 0
   # for i in range(0, len(initPath)-1):
-  #   z += wg[initPath[i]][initPath[i+1]]
+  #   initCost += wg[initPath[i]][initPath[i+1]]
 
-  # initCost = z
+  # initCost = 151283.43087860403
 
-  print(initPath, initCost)
+  print("INIT PARAMS: {}, {}".format(initPath, initCost))
   global untested
   
 
@@ -53,24 +56,29 @@ def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width
   s = 0
   t = 1
 
-  remaining = []
+  untested = []
   for i in range(0, len(initPath)-1):
     for j in range(0, len(initPath)-1):
       if i != j:
-        remaining += [(resultList[t][0][i], resultList[t][0][j])]
+        untested += [(resultList[t][0][i], resultList[t][0][j])]
 
   def stepper():
     global untested
-    nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList, remaining
+    nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList
+
+    # print(len(added), len(removed))
 
     # print("\n\n")
-    # print(untested)
-    # print(resultList[s])
-    # print(resultList[t])
+    # # print(untested)
+    # # print(resultList[s])
+    # print(resultList)
     midSection = resultList[t][0][1:len(resultList[t][0])-1]
     revSection = midSection[::-1]
+
     if resultList[s] == resultList[t] or resultList[s][0][1:len(resultList[s][0])-1] == revSection:
+      print(len(untested))
       if len(untested) > 0:
+        print("here")
         resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
         for key in lineList.keys(): #clean up window before populating
@@ -139,6 +147,14 @@ def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width
 
       s += 1
       t += 1
+
+      untested = []
+      for i in range(0, len(initPath)-1):
+        for j in range(0, len(initPath)-1):
+          if i != j:
+            untested += [(resultList[t][0][i], resultList[t][0][j])]
+            untested += [(resultList[t][0][j], resultList[t][0][i])]
+
   # STEP FUNCTIONALITY #
 
   # TKINTER #
@@ -158,8 +174,6 @@ def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width
   # TKINTER #
 
 def outerLoop(initCoords, graph, initPath, initCost, wndw, lineList): #step 1
-
-  # print("\n")
   # print(initPath, initCost)
   global bestTour, added, addedCost, removed, removedCost, untested
   wg = weightedGraph(initCoords)
@@ -198,7 +212,6 @@ def outerLoop(initCoords, graph, initPath, initCost, wndw, lineList): #step 1
     return scan2
 
 def edgeScan(v, u, graph, path, wg, wndw, lineList): #step 2
-
   global bestTour, added, removed, addedCost, removedCost, untested
   u0 = u
   origPath = path
@@ -278,10 +291,7 @@ def testTour(graph, path, dPath, wg, v, u, w, newEdge, wndw, lineList): #step 3
   for i in range(0, len(tour)-1):
     cost += wg[tour[i]][tour[i+1]]
 
-  if dPath[w] in [31, 18, 44, 46]: #should be printing met
-    if dPath[u] in [31, 18, 44, 46]:
-      if dPath[v] in [31, 18, 44, 46]:
-        print(cost)
+  # print("potential tour cost: {}".format(cost))
 
   if cost <= bestTour[1]:
     bestTour[0] = tour
