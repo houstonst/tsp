@@ -24,10 +24,12 @@ Output: A hamiltonian cycle and complexity data
 
 Enter a .csv or .txt file name ["example.csv or example.txt"]: 
 """)
-  inp = "./tests/" + input()
-  file = inp
+  fileList = ["6.csv", "11.csv", "14.csv", "26.csv", "29.csv", "48.csv", "52.csv", "76.csv", "100.csv", "105.csv", "107.csv", "120.csv", "152.txt", "195.csv", "200.txt", "225.txt", "280.txt", "299.txt", "318.txt", "439.txt"]
+ 
+  # inp = "./tests/" + input()
+  # file = inp
   print("---------------------------------------------------------------------------------------------\n\n")
-  cityNames, coords, newCoords = reader(file, height, width)
+  # cityNames, coords, newCoords = reader(file, height, width)
   print("---------------------------------------------------------------------------------------------\n\n")
   print("""
 1: Brute Force
@@ -48,7 +50,10 @@ Enter an algorithm by its number:
 
   if algo in algoPicks:
     if algo == "1":
-      bruteForce(coords, newCoords, cityNames, height, width) #path is the same as the path variable in the algorithm's file
+      for f in fileList:
+        file = "./tests/" + f
+        cityNames, coords, newCoords = reader(file, height, width)
+        bruteForce(coords, newCoords, cityNames, height, width) #path is the same as the path variable in the algorithm's file
     elif algo == "2":
       print("\n")
       print("---------------------------------------------------------------------------------------------\n\n")
@@ -59,7 +64,11 @@ Enter an algorithm by its number:
 Enter whether or not to run with GUI
 """)
       option = input()
-      nearestNeighbor(coords, newCoords, cityNames, height, width, option)
+      for f in fileList:
+        file = "./tests/" + f
+        print("{}: \n".format(file))
+        cityNames, coords, newCoords = reader(file, height, width)
+        nearestNeighbor(coords, newCoords, cityNames, height, width, option)
     elif algo == "3":
       print("\n")
       print("---------------------------------------------------------------------------------------------\n\n")
