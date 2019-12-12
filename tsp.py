@@ -43,7 +43,7 @@ Enter a .csv or .txt file name ["example.csv or example.txt"]:
 Enter an algorithm by its number:
 """)
   algo = input()
-  algoPicks = "123456"
+  algoPicks = "1234567"
 
   print("\n")
   print("---------------------------------------------------------------------------------------------\n\n")
@@ -66,7 +66,8 @@ Enter whether or not to run with GUI
       option = input()
       for f in fileList:
         file = "./tests/" + f
-        print("{}: \n".format(file))
+        print("--------------------------------------------------------------------------------------------\n")
+        print("\n{}: \n\n".format(file))
         cityNames, coords, newCoords = reader(file, height, width)
         nearestNeighbor(coords, newCoords, cityNames, height, width, option)
     elif algo == "3":
@@ -79,7 +80,12 @@ Enter whether or not to run with GUI
 Enter whether or not to run with GUI
 """)
       option = input()
-      farthestInsertion(coords, newCoords, cityNames, height, width, option)
+      for f in fileList:
+        file = "./tests/" + f
+        print("--------------------------------------------------------------------------------------------\n")
+        print("\n{}: \n\n".format(file))
+        cityNames, coords, newCoords = reader(file, height, width)
+        farthestInsertion(coords, newCoords, cityNames, height, width, option)
     elif algo == "4":
       print("\n")
       print("---------------------------------------------------------------------------------------------\n\n")
@@ -90,8 +96,13 @@ Enter whether or not to run with GUI
 Enter whether or not to run with GUI
 """)
       option = input()
-      randPath, randCost = randomTour(coords, cityNames)
-      twoOpt(coords, newCoords, cityNames, randPath, randCost, height, width, option)
+      for f in fileList:
+        file = "./tests/" + f
+        print("--------------------------------------------------------------------------------------------\n")
+        print("\n{}: \n\n".format(file))
+        cityNames, coords, newCoords = reader(file, height, width)
+        randPath, randCost = randomTour(coords, cityNames)
+        twoOpt(coords, newCoords, cityNames, randPath, randCost, height, width, option)
     elif algo == "5":
       randPath, randCost = randomTour(coords, cityNames)
       threeOpt(coords, cityNames, randPath, randCost, height, width)
@@ -117,6 +128,24 @@ Enter the initial tour constructor by its number:
           linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width)
       else:
         print("Exiting. Must enter a constructor number given by the list above")
+      
+    elif algo == "7":
+      for f in fileList:
+        avgCost = 0.0
+        avgTime = 0.0
+        for i in range(10):
+          file = "./tests/" + f
+          cityNames, coords, newCoords = reader(file, height, width)
+          # print("--------------------------------------------------------------------------------------------\n")
+          # print("\n{}: \n\n".format(file))
+          path, cost, endTime = randomTour(coords, cityNames)
+          avgCost += cost
+          avgTime += endTime
+        avgCost = avgCost/10
+        avgTime = avgTime/10
+        print("Average cost and time over 10 trials: {}, {}".format(avgCost, avgTime))
+        
+        print("-----------------------------------------------------------------\n")
   else:
     print("Exiting. Must enter an algorithm number given by the list above")
 if __name__ == "__main__":

@@ -2,6 +2,7 @@ import operator, time, math, random
 from algos.euclidean import *
 
 def randomTour(graph, nameArray):
+  startTime = time.time()
   path = []
   cost = 0.0
   wg = weightedGraph(graph)
@@ -20,4 +21,8 @@ def randomTour(graph, nameArray):
   for i in range(0, len(path)-1):
     cost += wg[path[i]][path[i+1]]
 
-  return path, cost
+  endTime = time.time()-startTime
+
+  print("Randomly Generated Tour: {} at cost: {}".format(path, cost))
+  print("Ran in {} sec".format(endTime))
+  return path, cost, endTime
