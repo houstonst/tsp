@@ -181,4 +181,4 @@ def farthestInsertion(initCoords, graph, nameArray, height, width, option):
     stepper()
   
   print(path, cost)
-  return path, cost
+  return path, cost, 0

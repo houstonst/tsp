@@ -97,12 +97,21 @@ Enter whether or not to run with GUI
 """)
       option = input()
       for f in fileList:
+        avgCost = 0.0
+        avgTime = 0.0
         file = "./tests/" + f
         print("--------------------------------------------------------------------------------------------\n")
         print("\n{}: \n\n".format(file))
-        cityNames, coords, newCoords = reader(file, height, width)
-        randPath, randCost = randomTour(coords, cityNames)
-        twoOpt(coords, newCoords, cityNames, randPath, randCost, height, width, option)
+        for i in range(10):
+          cityNames, coords, newCoords = reader(file, height, width)
+          randPath, randCost, randTime = randomTour(coords, cityNames)          
+          path, cost, runtime = twoOpt(coords, newCoords, cityNames, randPath, randCost, height, width, option)
+          avgCost += cost
+          avgTime += runtime
+        avgCost = avgCost/10
+        avgTime = avgTime/10
+        print("Average cost and time over 10 trials: {}, {}".format(avgCost, avgTime))
+    
     elif algo == "5":
       randPath, randCost = randomTour(coords, cityNames)
       threeOpt(coords, cityNames, randPath, randCost, height, width)
@@ -133,14 +142,14 @@ Enter the initial tour constructor by its number:
       for f in fileList:
         avgCost = 0.0
         avgTime = 0.0
+        file = "./tests/" + f
+        print("--------------------------------------------------------------------------------------------\n")
+        print("\n{}: \n\n".format(file))
         for i in range(10):
-          file = "./tests/" + f
           cityNames, coords, newCoords = reader(file, height, width)
-          # print("--------------------------------------------------------------------------------------------\n")
-          # print("\n{}: \n\n".format(file))
-          path, cost, endTime = randomTour(coords, cityNames)
+          path, cost, runtime = randomTour(coords, cityNames)
           avgCost += cost
-          avgTime += endTime
+          avgTime += runtime
         avgCost = avgCost/10
         avgTime = avgTime/10
         print("Average cost and time over 10 trials: {}, {}".format(avgCost, avgTime))

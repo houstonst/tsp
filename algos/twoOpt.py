@@ -191,4 +191,4 @@ def twoOpt(initCoords, graph, nameArray, path, cost, height, width, option):
     print("Two Optimal Tour: {} at Cost: {} in {} Seconds".format(pathCopy, costCopy, runtime))
   
   
-  return pathCopy, costCopy
+  return pathCopy, costCopy, runtime

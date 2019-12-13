@@ -22,7 +22,7 @@ def step(initCoords, graph, path, cost, iterations, i, wndw, option):
   if option == "1":
     wndw.create_line(graph[next][0], graph[next][1], graph[path[0]][0], graph[path[0]][1])
   path = operator.iadd([next], path)
-  return (path, cost, iterations)
+  return path, cost, 0
 
 def nearestNeighbor(initCoords, graph, nameArray, height, width, option):
   if option == "1":
@@ -55,7 +55,7 @@ def nearestNeighbor(initCoords, graph, nameArray, height, width, option):
         i += 1
       else:
         print("Nearest Neighbor Tour: {}, Cost: {}".format(path, cost))
-        return
+        return path, cost, 0
     elif option == "2":
       while i <= len(graph):
         w = 0
@@ -64,7 +64,7 @@ def nearestNeighbor(initCoords, graph, nameArray, height, width, option):
       
       runTime = time.time() - startTime
       print("Nearest Neighbor Tour: {}, Cost: {}, Running Time: {}".format(path, cost, runTime))
-      return
+      return path, cost, runTime
       
   if option == "1":
     # TKINTER #
@@ -75,4 +75,5 @@ def nearestNeighbor(initCoords, graph, nameArray, height, width, option):
     # TKINTER #
   
   else:
-    stepper()
+    path, cost, runtime = stepper()
+    return path, cost, runtime
