@@ -23,6 +23,6 @@ def randomTour(graph, nameArray):
 
   endTime = time.time()-startTime
 
-  print("Randomly Generated Tour: {} at cost: {}".format(path, cost))
-  print("Ran in {} sec".format(endTime))
+  # print("Randomly Generated Tour: {} at cost: {}".format(path, cost))
+  # print("Ran in {} sec".format(endTime))
   return path, cost, endTime

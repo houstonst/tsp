@@ -10,7 +10,8 @@ removed = set()
 removedCost = 0.0
 untested = [] #in the form (vval, w0val)
 
-def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width):
+def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width, option):
+  startTime = time.time()
   wg = weightedGraph(initCoords)
 
   # initPath = [18, 2, 41, 25, 12, 35, 15, 20, 17, 37, 31, 40, 39, 28, 27, 8, 32, 4, 3, 38, 26, 13, 43, 11, 42, 16, 19, 36, 6, 33, 47, 45, 46, 44, 34, 23, 24, 30, 1, 7, 29, 0, 5, 9, 22, 10, 21, 14, 18]
@@ -22,24 +23,25 @@ def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width
 
   # initCost = 151283.43087860403
 
-  print("INIT PARAMS: {}, {}".format(initPath, initCost))
+  # print("INIT PARAMS: {}, {}".format(initPath, initCost))
   global untested
+  wndw = 0
   
-
-  # TKINTER #
-  root = Tk() #GUI for the starting path
-  canvas_height = height
-  canvas_width = width
-  root.title("Euclidean TSP Solver")
-  root.iconbitmap('./graphics/favicon.ico')
-  wndw = Canvas(root, width = canvas_width, height = canvas_height)
-  wndw.pack(expand = YES, fill=BOTH)
-  for pair in graph:
-    index = graph.index(pair)
-    name = nameArray[index]
-    wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
-    wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
-  # TKINTER #
+  if option == "1":
+    # TKINTER #
+    root = Tk() #GUI for the starting path
+    canvas_height = height
+    canvas_width = width
+    root.title("Euclidean TSP Solver")
+    root.iconbitmap('./graphics/favicon.ico')
+    wndw = Canvas(root, width = canvas_width, height = canvas_height)
+    wndw.pack(expand = YES, fill=BOTH)
+    for pair in graph:
+      index = graph.index(pair)
+      name = nameArray[index]
+      wndw.create_oval((pair[0]-3, pair[1]-3, pair[0] + 3, pair[1] + 3), fill = "red")
+      wndw.create_text(pair[0], pair[1] - 12, fill = "black", font = "Times 10 bold", text = name)
+    # TKINTER #
 
   # STEP FUNCTIONALITY #
   untested = []
@@ -66,112 +68,210 @@ def linKernighan(initCoords, graph, nameArray, initPath, initCost, height, width
     global untested
     nonlocal s, t, initPath, initCost, graph, wndw, resultList, lineList
 
-    # print(len(added), len(removed))
+    if option == "1":
+      # print(len(added), len(removed))
 
-    # print("\n\n")
-    # # print(untested)
-    # # print(resultList[s])
-    # print(resultList)
-    midSection = resultList[t][0][1:len(resultList[t][0])-1]
-    revSection = midSection[::-1]
+      # print("\n\n")
+      # # print(untested)
+      # # print(resultList[s])
+      # print(resultList)
+      midSection = resultList[t][0][1:len(resultList[t][0])-1]
+      revSection = midSection[::-1]
 
-    if resultList[s] == resultList[t] or resultList[s][0][1:len(resultList[s][0])-1] == revSection:
-      print(len(untested))
-      if len(untested) > 0:
-        print("here")
+      if resultList[s] == resultList[t] or resultList[s][0][1:len(resultList[s][0])-1] == revSection:
+        # print(len(untested))
+        if len(untested) > 0:
+          # print("here")
+          resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
+
+          if option == "1":
+            for key in lineList.keys(): #clean up window before populating
+              wndw.delete(lineList[key])
+            
+            lineList = {}
+
+            for i in range(0, len(bestTour[0])-2): #display bestTour
+              tour = resultList[len(resultList)-1][0]
+              a = tour[i]
+              b = tour[i+1]
+              line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+              lineList.update({(a, b): line})
+            first = tour[0]
+            last = tour[len(tour)-2]
+            line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+            lineList.update({(first, last): line})
+
+          s += 1
+          t += 1
+
+        else:
+          if option == "1":
+            for key in lineList.keys(): #clean up window before populating
+              wndw.delete(lineList[key])
+            
+            lineList = {}
+
+            tour = resultList[len(resultList)-1][0]
+            for i in range(0, len(bestTour[0])-2): #display bestTour
+              a = tour[i]
+              b = tour[i+1]
+              line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+              lineList.update({(a, b): line})
+            first = tour[0]
+            last = tour[len(tour)-2]
+            line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+            lineList.update({(first, last): line})
+          
+          # print("Initial Tour: {}, Initial Cost: {}".format(initPath, initCost))
+          print("Lin-Kernighan Result: {}, Cost: {}\n".format(resultList[len(resultList)-1][0], resultList[len(resultList)-1][1]))
+          runtime = time.time() - startTime
+          return resultList[len(resultList)-1][0], resultList[len(resultList)-1][1], runtime
+      else:
+        untested = []
+        for i in range(0, len(initPath)-1):
+          for j in range(0, len(initPath)-1):
+            if i != j:
+              untested += [(resultList[t][0][i], resultList[t][0][j])]
+
         resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
 
-        for key in lineList.keys(): #clean up window before populating
-          wndw.delete(lineList[key])
-        
-        lineList = {}
+        if option == "1":
+          for key in lineList.keys(): #clean up window before populating
+            wndw.delete(lineList[key])
+          
+          lineList = {}
 
-        for i in range(0, len(bestTour[0])-2): #display bestTour
-          tour = resultList[len(resultList)-1][0]
-          a = tour[i]
-          b = tour[i+1]
-          line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
-          lineList.update({(a, b): line})
-        first = tour[0]
-        last = tour[len(tour)-2]
-        line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
-        lineList.update({(first, last): line})
+          for i in range(0, len(bestTour[0])-2): #display bestTour
+            tour = resultList[len(resultList)-1][0]
+            a = tour[i]
+            b = tour[i+1]
+            line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+            lineList.update({(a, b): line})
+          first = tour[0]
+          last = tour[len(tour)-2]
+          line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+          lineList.update({(first, last): line})
 
         s += 1
         t += 1
 
-      else:
-        for key in lineList.keys(): #clean up window before populating
-          wndw.delete(lineList[key])
-        
-        lineList = {}
-
-        tour = resultList[len(resultList)-1][0]
-        for i in range(0, len(bestTour[0])-2): #display bestTour
-          a = tour[i]
-          b = tour[i+1]
-          line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
-          lineList.update({(a, b): line})
-        first = tour[0]
-        last = tour[len(tour)-2]
-        line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
-        lineList.update({(first, last): line})
-        
-        print("Initial Tour: {}, Initial Cost: {}".format(initPath, initCost))
-        print("Lin-Kernighan Result: {}, Cost: {}\n".format(resultList[len(resultList)-1][0], resultList[len(resultList)-1][1]))
-        return
-    else:
-      untested = []
-      for i in range(0, len(initPath)-1):
-        for j in range(0, len(initPath)-1):
-          if i != j:
-            untested += [(resultList[t][0][i], resultList[t][0][j])]
-
-      resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
-
-      for key in lineList.keys(): #clean up window before populating
-        wndw.delete(lineList[key])
-      
-      lineList = {}
-
-      for i in range(0, len(bestTour[0])-2): #display bestTour
-        tour = resultList[len(resultList)-1][0]
-        a = tour[i]
-        b = tour[i+1]
-        line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
-        lineList.update({(a, b): line})
-      first = tour[0]
-      last = tour[len(tour)-2]
-      line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
-      lineList.update({(first, last): line})
-
-      s += 1
-      t += 1
-
-      untested = []
-      for i in range(0, len(initPath)-1):
-        for j in range(0, len(initPath)-1):
-          if i != j:
-            untested += [(resultList[t][0][i], resultList[t][0][j])]
-            untested += [(resultList[t][0][j], resultList[t][0][i])]
+        untested = []
+        for i in range(0, len(initPath)-1):
+          for j in range(0, len(initPath)-1):
+            if i != j:
+              untested += [(resultList[t][0][i], resultList[t][0][j])]
+              untested += [(resultList[t][0][j], resultList[t][0][i])]
 
   # STEP FUNCTIONALITY #
 
-  # TKINTER #
-  for i in range(0, len(initPath)-2):
-    a = initPath[i]
-    b = initPath[i+1]
-    line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
-    lineList.update({(a, b): line})
-  first = initPath[0]
-  last = initPath[len(initPath)-2]
-  line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
-  lineList.update({(first, last): line})
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------
+  if option == "2":
+    while True:
+      midSection = resultList[t][0][1:len(resultList[t][0])-1]
+      revSection = midSection[::-1]
 
-  stepButton = Button(root, text = "Step", command = stepper)
-  stepButton.pack(side = BOTTOM)
-  root.mainloop()
-  # TKINTER #
+      if resultList[s] == resultList[t] or resultList[s][0][1:len(resultList[s][0])-1] == revSection:
+        # print(len(untested))
+        if len(untested) > 0:
+          # print("here")
+          resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
+
+          if option == "1":
+            for key in lineList.keys(): #clean up window before populating
+              wndw.delete(lineList[key])
+            
+            lineList = {}
+
+            for i in range(0, len(bestTour[0])-2): #display bestTour
+              tour = resultList[len(resultList)-1][0]
+              a = tour[i]
+              b = tour[i+1]
+              line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+              lineList.update({(a, b): line})
+            first = tour[0]
+            last = tour[len(tour)-2]
+            line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+            lineList.update({(first, last): line})
+
+          s += 1
+          t += 1
+
+        else:
+          if option == "1":
+            for key in lineList.keys(): #clean up window before populating
+              wndw.delete(lineList[key])
+            
+            lineList = {}
+
+            tour = resultList[len(resultList)-1][0]
+            for i in range(0, len(bestTour[0])-2): #display bestTour
+              a = tour[i]
+              b = tour[i+1]
+              line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+              lineList.update({(a, b): line})
+            first = tour[0]
+            last = tour[len(tour)-2]
+            line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+            lineList.update({(first, last): line})
+          
+          # print("Initial Tour: {}, Initial Cost: {}".format(initPath, initCost))
+          runtime = time.time() - startTime
+          print("Lin-Kernighan Result: {}, Cost: {}, Runtime: {}\n".format(resultList[len(resultList)-1][0], resultList[len(resultList)-1][1], runtime))
+          return resultList[len(resultList)-1][0], resultList[len(resultList)-1][1], runtime
+      else:
+        untested = []
+        for i in range(0, len(initPath)-1):
+          for j in range(0, len(initPath)-1):
+            if i != j:
+              untested += [(resultList[t][0][i], resultList[t][0][j])]
+
+        resultList += [outerLoop(initCoords, graph, resultList[t][0], resultList[t][1], wndw, lineList)]
+
+        if option == "1":
+          for key in lineList.keys(): #clean up window before populating
+            wndw.delete(lineList[key])
+          
+          lineList = {}
+
+          for i in range(0, len(bestTour[0])-2): #display bestTour
+            tour = resultList[len(resultList)-1][0]
+            a = tour[i]
+            b = tour[i+1]
+            line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+            lineList.update({(a, b): line})
+          first = tour[0]
+          last = tour[len(tour)-2]
+          line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+          lineList.update({(first, last): line})
+
+        s += 1
+        t += 1
+
+        untested = []
+        for i in range(0, len(initPath)-1):
+          for j in range(0, len(initPath)-1):
+            if i != j:
+              untested += [(resultList[t][0][i], resultList[t][0][j])]
+              untested += [(resultList[t][0][j], resultList[t][0][i])]
+
+    # STEP FUNCTIONALITY #
+
+  if option == "1":
+    # TKINTER #
+    for i in range(0, len(initPath)-2):
+      a = initPath[i]
+      b = initPath[i+1]
+      line = wndw.create_line(graph[a][0], graph[a][1], graph[b][0], graph[b][1])
+      lineList.update({(a, b): line})
+    first = initPath[0]
+    last = initPath[len(initPath)-2]
+    line = wndw.create_line(graph[first][0], graph[first][1], graph[last][0], graph[last][1])
+    lineList.update({(first, last): line})
+
+    stepButton = Button(root, text = "Step", command = stepper)
+    stepButton.pack(side = BOTTOM)
+    root.mainloop()
+    # TKINTER #
 
 def outerLoop(initCoords, graph, initPath, initCost, wndw, lineList): #step 1
   # print(initPath, initCost)

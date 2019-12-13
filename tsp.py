@@ -25,7 +25,8 @@ Output: A hamiltonian cycle and complexity data
 Enter a .csv or .txt file name ["example.csv or example.txt"]: 
 """)
   fileList = ["6.csv", "11.csv", "14.csv", "26.csv", "29.csv", "48.csv", "52.csv", "76.csv", "100.csv", "105.csv", "107.csv", "120.csv", "152.txt", "195.csv", "200.txt", "225.txt", "280.txt", "299.txt", "318.txt", "439.txt"]
- 
+  fileList = ["6.csv", "11.csv", "26.csv", "29.csv", "48.csv", "52.csv", "76.csv", "100.csv", "105.csv", "120.csv", "152.txt", "195.csv", "200.txt", "225.txt", "280.txt", "299.txt", "318.txt", "439.txt"]
+
   # inp = "./tests/" + input()
   # file = inp
   print("---------------------------------------------------------------------------------------------\n\n")
@@ -118,7 +119,8 @@ Enter whether or not to run with GUI
     elif algo == "6":
       print("""
 1: Random Tour
-2: Farthest Insertion Tour
+2: Nearest Neighbor Tour
+3: Farthest Insertion Tour
 
 Enter the initial tour constructor by its number:
 """)
@@ -127,16 +129,31 @@ Enter the initial tour constructor by its number:
 
       print("\n")
       print("---------------------------------------------------------------------------------------------\n\n")
+      print("""
+1: Run Graphics
+2: Run Without Graphics
 
-      if constructor in constPicks:
-        if constructor == "1":
-          initPath, initCost = randomTour(coords, cityNames)
-          linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width)
-        elif constructor == "2":
-          initPath, initCost = farthestInsertion(coords, newCoords, cityNames, height, width, "2")
-          linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width)
-      else:
-        print("Exiting. Must enter a constructor number given by the list above")
+Enter whether or not to run with GUI
+""")
+      option = input()
+      for f in fileList:
+        file = "./tests/" + f
+        print("--------------------------------------------------------------------------------------------\n")
+        print("\n{}: \n\n".format(file))
+        cityNames, coords, newCoords = reader(file, height, width)
+
+        if constructor in constPicks:
+          if constructor == "1":
+            initPath, initCost, runtime = randomTour(coords, cityNames)
+            linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width, option)
+          elif constructor == "2":
+            initPath, initCost, runtime = nearestNeighbor(coords, newCoords, cityNames, height, width, option)
+            linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width, option)
+          elif constructor == "3":
+            initPath, initCost, runtime = farthestInsertion(coords, newCoords, cityNames, height, width, option)
+            linKernighan(coords, newCoords, cityNames, initPath, initCost, height, width, option)
+        else:
+          print("Exiting. Must enter a constructor number given by the list above")
       
     elif algo == "7":
       for f in fileList:
