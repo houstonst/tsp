@@ -25,7 +25,7 @@ Output: A hamiltonian cycle and complexity data
 Enter a .csv or .txt file name ["example.csv or example.txt"]: 
 """)
   fileList = ["6.csv", "11.csv", "14.csv", "26.csv", "29.csv", "48.csv", "52.csv", "76.csv", "100.csv", "105.csv", "107.csv", "120.csv", "152.txt", "195.csv", "200.txt", "225.txt", "280.txt", "299.txt", "318.txt", "439.txt"]
-  fileList = ["6.csv", "11.csv", "26.csv", "29.csv", "48.csv", "52.csv", "76.csv", "100.csv", "105.csv", "120.csv", "152.txt", "195.csv", "200.txt", "225.txt", "280.txt", "299.txt", "318.txt", "439.txt"]
+  # fileList = ["6.csv", "11.csv", "26.csv", "29.csv", "48.csv", "52.csv", "76.csv", "100.csv", "105.csv", "120.csv", "152.txt", "195.csv", "200.txt", "225.txt", "280.txt", "299.txt", "318.txt", "439.txt"]
 
   # inp = "./tests/" + input()
   # file = inp
